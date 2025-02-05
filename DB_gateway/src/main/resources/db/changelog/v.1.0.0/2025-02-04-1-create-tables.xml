@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="2024-02-04-create-users" author="LAA">
+        <sql><![CDATA[
+            CREATE TABLE Users (
+                userId SERIAL PRIMARY KEY,
+                userName VARCHAR(255) NOT NULL,
+                email VARCHAR(255) NOT NULL UNIQUE,
+                role VARCHAR(50) NOT NULL,
+                socialLinks JSONB,
+                birthDate DATE,
+                profilePhoto BYTEA,
+                phoneNumber VARCHAR(15),
+                location VARCHAR(255),
+                profileDescription TEXT
+            );
+        ]]></sql>
+    </changeSet>
+
+    <changeSet id="2024-02-04-create-projects" author="LAA">
+        <sql><![CDATA[
+            CREATE TABLE Projects (
+                projectId SERIAL PRIMARY KEY,
+                projectName VARCHAR(255) NOT NULL,
+                description TEXT NOT NULL,
+                startDate DATE NOT NULL,
+                endDate DATE NOT NULL,
+                status VARCHAR(50) NOT NULL
+            );
+        ]]></sql>
+    </changeSet>
+
+    <changeSet id="2024-02-04-create-tasks" author="LAA">
+        <sql><![CDATA[
+            CREATE TABLE Tasks (
+                taskId SERIAL PRIMARY KEY,
+                taskName VARCHAR(255) NOT NULL,
+                status VARCHAR(50) NOT NULL,
+                startDate DATE NOT NULL,
+                endDate DATE NOT NULL,
+                projectId INT NOT NULL REFERENCES Projects(projectId) ON DELETE CASCADE,
+                category VARCHAR(50) NOT NULL,
+                priority VARCHAR(20) NOT NULL,
+                description TEXT,
+                assignedTo INT REFERENCES Users(userId) ON DELETE SET NULL,
+                dependencies JSONB
+            );
+        ]]></sql>
+    </changeSet>
+
+    <changeSet id="2024-02-04-create-comments" author="LAA">
+        <sql><![CDATA[
+            CREATE TABLE Comments (
+                commentId SERIAL PRIMARY KEY,
+                content TEXT NOT NULL,
+                authorId INT NOT NULL REFERENCES Users(userId) ON DELETE CASCADE,
+                taskId INT NOT NULL REFERENCES Tasks(taskId) ON DELETE CASCADE,
+                date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+            );
+        ]]></sql>
+    </changeSet>
+
+    <changeSet id="2024-02-04-create-project-users" author="LAA">
+        <sql><![CDATA[
+            CREATE TABLE ProjectUsers (
+                Id SERIAL PRIMARY KEY,
+                projectId INT NOT NULL REFERENCES Projects(projectId) ON DELETE CASCADE,
+                userId INT NOT NULL REFERENCES Users(userId) ON DELETE CASCADE
+            );
+        ]]></sql>
+    </changeSet>
+
+</databaseChangeLog>

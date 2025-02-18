@@ -1,0 +1,143 @@
+* {
+  outline: 1px solid red;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.register-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background: #FFFEDA;
+}
+
+.register-box {
+  width: 570px;
+  height: 670px;
+  left: 175px;
+  top: 200px;
+  position: absolute;
+  background: #FFE1CD;
+  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.25);
+  border-radius: 50px;
+}
+
+.register-title {
+  left: 275px;
+  top: 250px;
+  position: absolute;
+  text-align: center;
+  color: black;
+  font-size: 48px;
+  font-family: 'Anonymous Pro', sans-serif;
+  font-weight: 400;
+  word-wrap: break-word;
+}
+
+.input-container {
+  width: 430px;
+  height: 70px;
+  left: 245px;
+  background: #FFFEDA;
+  border-radius: 15px;
+  position: absolute;
+}
+
+.input-container .label {
+  left: 277px;
+  top: 10px;
+  position: absolute;
+  text-align: center;
+  color: #797979;
+  font-size: 32px;
+  font-family: 'Anonymous Pro', sans-serif;
+  font-weight: 400;
+  word-wrap: break-word;
+}
+
+.input-field {
+  width: 100%;
+  height: 100%;
+  border: none;
+  outline: none;
+  background-color: transparent;
+  text-align: center;
+  font-size: 24px;
+  color: #797979;
+  background-color: #FFFEDA !important;
+}
+
+.register-btn {
+  width: 430px;
+  height: 70px;
+  left: 245px;
+  top: 650px;
+  position: absolute;
+  background: #FFBBBB;
+  border-radius: 15px;
+  font-size: 32px;
+  font-family: 'Anonymous Pro', sans-serif;
+  font-weight: 400;
+  text-align: center;
+  color: black;
+  cursor: pointer;
+}
+
+.register-btn:hover {
+  background-color: #ff9999;
+}
+
+.login-link {
+  left: 277px;
+  top: 770px;
+  position: absolute;
+  text-align: center;
+  color: black;
+  font-size: 32px;
+  font-family: 'Anonymous Pro', sans-serif;
+  font-weight: 400;
+  word-wrap: break-word;
+}
+
+.login-link span {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.link-button {
+  background: none;
+  border: none;
+  color: black;
+  font-size: 16px;
+  cursor: pointer;
+  text-decoration: underline;
+}
+.link-button:hover {
+  color: #FFBBBB;
+}
+
+.button-signin {
+  width: 100%;
+  height: auto;
+  margin: 8px 0;
+  border-radius: 12px;
+  font-size: 22px;
+  text-align: center;
+  outline: none;
+  box-sizing: border-box;
+  background: #FFBBBB;
+  border: 2px solid #FFE1CD;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.button-signin:disabled {
+  background: #ddd;
+  cursor: not-allowed;
+}

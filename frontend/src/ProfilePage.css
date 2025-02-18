@@ -1,0 +1,186 @@
+/* Общие стили */
+* {
+    outline: 1px solid red;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  
+  body, html {
+    width: 100%;
+    height: 100%;
+    font-family: 'Anonymous Pro', monospace;
+    /* padding-left: 15%; */
+  }
+  
+  .profile-page {
+    width: 100vw;
+    height: 100vh;
+    background: #fffeda;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .navbar {
+    width: 80%;
+    min-width: 630px;
+    height: 100px;
+    background: #ffe1cd;
+    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.25);
+    border-radius: 30px;
+    margin: 20px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+  }
+  
+  .logo {
+    width: 80px;
+    height: 80px;
+    background: #ffbbbb;
+    border-radius: 26px;
+  }
+  
+  .nav-buttons-group {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .nav-button {
+    background: #ffbbbb;
+    border: none;
+    border-radius: 15px;
+    font-size: 20px;
+    color: black;
+    padding: 10px 15px;
+    cursor: pointer;
+  }
+  
+  .main-content {
+    display: flex;
+    min-width: 630px;
+    width: 80%;
+    flex-grow: 1;
+    gap: 20px;
+    align-items: flex-start;
+    padding-bottom: 15px;
+  }
+  
+  .sidebar {
+    width: 20%;
+    min-width: 300px;
+    background: #ffe1cd;
+    border-radius: 30px;
+    padding: 15px;
+  }
+  
+  .sidebar-header {
+    font-size: 18px;
+    color: black;
+    margin-bottom: 15px;
+  }
+  
+  .content-area {
+    flex-grow: 1;
+    background: #ffe1cd;
+    border-radius: 30px;
+    padding: 20px;
+    color: black;
+    height: 100%;
+  }
+  
+  /* Стиль профиля */
+  .profile-info {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .profile-info .info-item {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+  
+  .profile-info .info-item span {
+    font-size: 1rem;
+    color: black;
+  }
+  
+  .profile-info .info-item .value {
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .profile-image {
+    width: 150px;
+    height: 150px;
+    background: #fffeda;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  .edit-button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #ffbbbb;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .edit-button:hover {
+    background-color: #4CAF50;
+  }
+  
+  .delete-button {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background-color: #ffbbbb;
+    color: black;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .delete-button:hover {
+    background-color: red;
+    color: white;
+  }
+  
+  .content-area {
+    position: relative; /* добавляем позиционирование для родителя */
+    flex-grow: 1;
+    background: #ffe1cd;
+    border-radius: 30px;
+    padding: 20px;
+    color: black;
+    height: 100%;
+  }
+  
+  .exit-button {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    background-color: #ffbbbb;
+    color: black;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .exit-button:hover {
+    background-color: #ffa07a;
+    color: white;
+  }
+  

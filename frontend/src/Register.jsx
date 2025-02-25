@@ -62,7 +62,7 @@ const Register = () => {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                 />
-                <button type="submit" className="button-signin" disabled={!email || !name || !password}>
+                <button type="submit" className="button" disabled={!email || !name || !password}>
                     зарегистрироваться
                 </button>
 

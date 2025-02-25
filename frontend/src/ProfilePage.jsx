@@ -8,7 +8,7 @@ const ProfilePage = () => {
   const [profileData, setProfileData] = useState({
     name: 'Иван Иванов',
     email: 'ivan.ivanov@example.com',
-    bio: 'Разработчик на React',
+    bio: 'Зарабатывает миллион в час',
     profileImage: '/foto_profile.jpeg',
   });
 
@@ -43,7 +43,7 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="profile-page">
+    <div className="base-page">
       <div className="navbar">
         <button className="logo" onClick={handleLogoClick}></button>
         <div className="nav-buttons-group">
@@ -56,20 +56,22 @@ const ProfilePage = () => {
       <div className="main-content">
         <div className="sidebar">
           <div className="sidebar-header">Мои недавние задачи:</div>
-          <div className="task-card-group">
-            <div className="task-card">
-              <div className="task-header">
-                <div className="task-title">Task Title</div>
-                <div className="task-deadline">Deadline</div>
+          <div className="item-card-group">
+            <div className="item-card">
+              <div className="item-header">
+                <div className="item-title">item Title</div>
+                <div className="item-deadline">Deadline</div>
+                <div className="item-status"></div>
               </div>
-              <div className="task-body">Task Description</div>
+              <div className="item-body">item Description</div>
             </div>
-            <div className="task-card">
-              <div className="task-header">
-                <div className="task-title">Task Title 2</div>
-                <div className="task-deadline">Deadline 2</div>
+            <div className="item-card">
+              <div className="item-header">
+                <div className="item-title">item Title 2</div>
+                <div className="item-deadline">Deadline 2</div>
+                <div className="item-status"></div>
               </div>
-              <div className="task-body">Task Description 2</div>
+              <div className="item-body">Task Description 2</div>
             </div>
           </div>
         </div>

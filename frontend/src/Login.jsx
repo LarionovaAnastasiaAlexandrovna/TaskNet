@@ -65,7 +65,7 @@ const Login = () => {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                 />
-                <button type="submit" className="button-login" disabled={!email || !password}>
+                <button type="submit" className="button" disabled={!email || !password}>
                         войти
                 </button>
             </form>

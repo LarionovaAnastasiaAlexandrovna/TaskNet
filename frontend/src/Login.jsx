@@ -1,35 +1,35 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";  // Изменено с useHistory на useNavigate
+import { useNavigate } from "react-router-dom"; 
 import "./Login.css";
 
 const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const navigate = useNavigate();  // Используем useNavigate
+    const navigate = useNavigate();
 
     const handleSubmit = (event) => {
         event.preventDefault();
         console.log("Отправка данных:", { email, password });
     
         // Временно убираем запрос к серверу
-        // fetch("http://localhost:8081/auth/login", {
-        //     method: "POST",
-        //     headers: {
-        //         "Content-Type": "application/json",
-        //     },
-        //     body: JSON.stringify({ email, password }),
-        // })
-        // .then((response) => {
-        //     if (!response.ok) {
-        //         throw new Error(`Ошибка: ${response.status}`);
-        //     }
-        //     return response.json();
-        // })
-        // .then((data) => {
-        //     console.log("Ответ от сервера:", data);
-        //     navigate("/home"); // После успешного входа
-        // })
-        // .catch((error) => console.error("Ошибка при запросе:", error));
+        fetch("http://localhost:8081/auth/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email, password }),
+        })
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error(`Ошибка: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then((data) => {
+            console.log("Ответ от сервера:", data);
+            navigate("/home"); // После успешного входа
+        })
+        .catch((error) => console.error("Ошибка при запросе:", error));
     
         // ВРЕМЕННО ПЕРЕНАПРАВЛЯЕМ НА /home БЕЗ ПРОВЕРКИ
         navigate("/home");

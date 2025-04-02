@@ -1,55 +1,65 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";  // Для навигации
+import { useNavigate } from "react-router-dom";
 import "./Register.css";
 
 const Register = () => {
-    const [name, setName] = useState("");
+    const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const navigate = useNavigate();  // Используем useNavigate
+    const [error, setError] = useState(""); // состояние для ошибок
+    const navigate = useNavigate();
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
-        console.log("Отправка данных:", { name, email, password });
-        // Отправка данных на бэкенд (замени URL на свой)
-        fetch("http://localhost:8081/auth/registration", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({name, email, password }),
-        })
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error(`Ошибка: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then((data) => console.log("Ответ от сервера:", data))
-        .catch((error) => console.error("Ошибка при запросе:", error));        
-    };
+        setError(""); // Очистка ошибки перед отправкой
 
-    const navigateToLogin = () => {
-        // Перенаправление на страницу входа
-        navigate("/auth/login");
+        try {
+            const response = await fetch("http://localhost:8081/auth/registration", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ username, email, password }),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || `Ошибка: ${response.status}`);
+            }
+
+            const data = await response.json();
+            console.log("Ответ от сервера:", data);
+
+            // Если сервер возвращает токен, сохраняем его
+            if (data.token) {
+                localStorage.setItem("authToken", data.token);
+            }
+
+            // Перенаправляем пользователя на главную
+            navigate("/auth/login");
+        } catch (error) {
+            console.error("Ошибка при запросе:", error);
+            setError(error.message); // Показываем ошибку пользователю
+        }
     };
 
     return (
         <div className="container">
             <h1>Регистрация</h1>
+            {error && <p className="error-message">{error}</p>} {/* Отображение ошибки */}
             <form onSubmit={handleSubmit}>
                 <input
                     type="text"
                     className="input-field"
-                    placeholder="имя"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Имя"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
                     required
                 />
                 <input
                     type="email"
                     className="input-field"
-                    placeholder="e-mail"
+                    placeholder="E-mail"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
@@ -57,19 +67,18 @@ const Register = () => {
                 <input
                     type="password"
                     className="input-field"
-                    placeholder="пароль"
+                    placeholder="Пароль"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
                 />
-                <button type="submit" className="button" disabled={!email || !name || !password}>
-                    зарегистрироваться
+                <button type="submit" className="button" disabled={!email || !username || !password}>
+                    Зарегистрироваться
                 </button>
-
             </form>
             <div className="links">
-                <a href="#" onClick={navigateToLogin}>
-                    уже зарегистрированы?
+                <a href="#" onClick={() => navigate("/auth/login")}>
+                    Уже зарегистрированы?
                 </a>
             </div>
         </div>

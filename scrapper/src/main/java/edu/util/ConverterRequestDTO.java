@@ -1,5 +1,6 @@
 package edu.util;
 
+import dto.LoginRequestDTO;
 import dto.RegisterRequestDTO;
 import edu.entity.User;
 import enums.UserRole;
@@ -16,7 +17,11 @@ public class ConverterRequestDTO {
         return user;
     }
 
-//    public Users convert(LoginRequestDTO loginRequestDTO) {
-//
-//    }
+    public User convert(LoginRequestDTO loginRequestDTO) {
+        User user = new User();
+        user.setEmail(loginRequestDTO.getEmail());
+        String passwordHash = loginRequestDTO.getPassword(); // TODO написать шифровальщик, а потом хеширование
+        user.setPasswordHash(passwordHash);
+        return user;
+    }
 }

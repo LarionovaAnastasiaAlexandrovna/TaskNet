@@ -1,5 +1,6 @@
 package edu.controllers;
 
+import dto.LoginRequestDTO;
 import dto.RegisterRequestDTO;
 import edu.entity.User;
 import edu.service.AuthUserServise;
@@ -28,21 +29,11 @@ public class AuthUserController {
             return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
     }
 
+    @PostMapping("/login")
+    public ResponseEntity<?> loginUser(@Valid @RequestBody LoginRequestDTO loginRequestDTO) {
+        System.out.println("Запрос на вход пришел в scrapper");
+        User user = usersService.login(loginRequestDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(user);
+    }
 
-//    private final WebClient webClient;
-
-//    public AuthUserController(WebClient.Builder webClientBuilder) {
-//        this.webClient = webClientBuilder.baseUrl("http://localhost:8081").build();
-//    }
-//    @PostMapping("/register")
-//    public ResponseEntity<String> register(@RequestBody RegisterRequestDTO request) {
-//        userServise.registerUser(request);
-//        return ResponseEntity.ok("User registered successfully");
-//    }
-//
-//    @PostMapping("/login")
-//    public ResponseEntity<String> login(@RequestBody LoginRequestDTO request) {
-//        boolean success = userServise.loginUser(request);
-//        return success ? ResponseEntity.ok("Login successful") : ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
-//    }
 }

@@ -14,4 +14,5 @@ import lombok.Setter;
 public class GeneraleResponseDTO {
     String response;
     Integer code;
+    String token;
 }

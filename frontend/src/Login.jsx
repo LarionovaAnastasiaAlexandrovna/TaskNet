@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
 import "./Login.css";
 
 const Login = () => {
@@ -10,8 +10,7 @@ const Login = () => {
     const handleSubmit = (event) => {
         event.preventDefault();
         console.log("Отправка данных:", { email, password });
-    
-        // Временно убираем запрос к серверу
+
         fetch("http://localhost:8081/auth/login", {
             method: "POST",
             headers: {
@@ -27,14 +26,13 @@ const Login = () => {
         })
         .then((data) => {
             console.log("Ответ от сервера:", data);
+            // Сохраняем токен в localStorage
+            localStorage.setItem("token", data.token);
             navigate("/home"); // После успешного входа
         })
         .catch((error) => console.error("Ошибка при запросе:", error));
-    
-        // ВРЕМЕННО ПЕРЕНАПРАВЛЯЕМ НА /home БЕЗ ПРОВЕРКИ
-        navigate("/home");
+
     };
-    
 
     const navigateToRegister = () => {
         // Перенаправление на страницу регистрации
@@ -66,9 +64,12 @@ const Login = () => {
                     required
                 />
                 <button type="submit" className="button" disabled={!email || !password}>
-                        войти
+                    войти
                 </button>
             </form>
+
+            {errorMessage && <p className="error-message">{errorMessage}</p>} {/* Показываем ошибку */}
+
             <div className="links">
                 <a href="#" onClick={navigateToResetPassword}>
                     забыли пароль?

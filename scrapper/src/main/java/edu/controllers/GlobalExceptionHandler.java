@@ -1,7 +1,7 @@
 package edu.controllers;
 
 import dto.ErrorResponseDTO;
-import exception.UserAlreadyExistsException;
+import exception.UserException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(UserAlreadyExistsException.class)
+    @ExceptionHandler(UserException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    public ErrorResponseDTO handleUserAlreadyExistsException(UserAlreadyExistsException ex) {
+    public ErrorResponseDTO handleUserAlreadyExistsException(UserException ex) {
         return new ErrorResponseDTO(400, ex.getMessage());
     }
 }

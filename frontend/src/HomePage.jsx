@@ -16,15 +16,30 @@ const HomePage = () => {
     }, []);
 
     const navigateToProfilePage = () => {
-        navigate("/profile");
-    };
-
-    const navigateToProjectPage = () => {
-        navigate("/project");
+        fetchWithAuth("http://localhost:8081/profile")
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Ошибка при получении профиля");
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Сохраняем полученные данные в localStorage или context (пока в localStorage для простоты)
+                localStorage.setItem("profileData", JSON.stringify(data));
+                navigate("/profile"); // Переход на страницу профиля
+            })
+            .catch(error => {
+                console.error("Ошибка при загрузке профиля:", error);
+                alert("Не удалось загрузить профиль");
+            });
     };
 
     const navigateToTaskPage = () => {
         navigate("/task");
+    };
+
+    const navigateToProjectPage = () => { // <--- добавили недостающую функцию
+        navigate("/project");
     };
 
     return (

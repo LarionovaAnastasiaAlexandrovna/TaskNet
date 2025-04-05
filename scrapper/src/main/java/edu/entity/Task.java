@@ -3,8 +3,11 @@ package edu.entity;
 //import edu.domain.enums.TaskPriority;
 //import edu.domain.enums.TaskStatus;
 
+import enums.TaskStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -29,24 +32,24 @@ import java.time.LocalDate;
 public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "taskId", nullable = false)
+    @Column(name = "taskid", nullable = false)
     Long taskId;
 
-    @Column(name = "taskName", nullable = false, length = 255)
+    @Column(name = "taskname", nullable = false, length = 255)
     String taskName;
 
-//    @Enumerated(value = EnumType.STRING)
-//    @Column(name = "status", nullable = false, length = 50)
-//    TaskStatus status;
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "status", nullable = false, length = 50)
+    TaskStatus status;
 
-    @Column(name = "startDate", nullable = false)
+    @Column(name = "startdate", nullable = false)
     LocalDate startDate;
 
-    @Column(name = "endDate", nullable = false)
+    @Column(name = "enddate", nullable = false)
     LocalDate endDate;
 
     @ManyToOne
-    @JoinColumn(name = "projectId", nullable = false, foreignKey = @ForeignKey(name = "fk_task_project"))
+    @JoinColumn(name = "projectid", nullable = false, foreignKey = @ForeignKey(name = "fk_task_project"))
     Project project;
 
     @Column(name = "category", nullable = false, length = 50)
@@ -60,7 +63,7 @@ public class Task {
     String description;
 
     @ManyToOne
-    @JoinColumn(name = "assignedTo", foreignKey = @ForeignKey(name = "fk_task_user"))
+    @JoinColumn(name = "assignedto", foreignKey = @ForeignKey(name = "fk_task_user"))
     User assignedTo;
 
     @Column(name = "dependencies", columnDefinition = "JSONB")

@@ -4,7 +4,7 @@ import dto.LoginRequestDTO;
 import dto.RegisterRequestDTO;
 import edu.entity.User;
 import edu.repository.UsersRepository;
-import edu.util.ConverterRequestDTO;
+import edu.util.ConverterAuthRequestDTO;
 import exception.UserException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,13 +17,12 @@ public class AuthUserServise {
     @Autowired
     private UsersRepository repository;
 
-    private final ConverterRequestDTO converter = new ConverterRequestDTO();
+    private final ConverterAuthRequestDTO converter = new ConverterAuthRequestDTO();
 
     public User save(RegisterRequestDTO registerRequestDTO) {
         System.out.println("Пытаемся сделать user = converter.convert(registerRequestDTO)");
         User user = converter.convert(registerRequestDTO);
         if (repository.findByEmail(user.getEmail()).isPresent()
-                //repository.isExistUserByEmail(user.getEmail())
         ) {
             throw new UserException(UserException.Type.USER_ALREADY_EXISTS, "Пользователь уже существует");
         } else {

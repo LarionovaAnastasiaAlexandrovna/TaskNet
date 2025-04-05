@@ -3,8 +3,9 @@ package edu.controllers;
 import dto.GeneraleResponseDTO;
 import dto.LoginRequestDTO;
 import dto.RegisterRequestDTO;
-import dto.RegistrationResponse;
+import dto.RegistrationResponseDTO;
 import edu.util.JwtUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -25,7 +26,8 @@ public class AuthController {
 
     private final RestTemplate restTemplate = new RestTemplate();  // Можно заменить на WebClient
 
-    private final JwtUtil jwtUtil = new JwtUtil();
+    @Autowired
+    JwtUtil jwtUtil;
 
     @PostMapping("/registration")
     public ResponseEntity<?> registerUser(/*@Valid*/ @RequestBody RegisterRequestDTO request) {
@@ -34,11 +36,11 @@ public class AuthController {
 
         try {
             System.out.println("Запрос на регистрацию пытается отправиться");
-            ResponseEntity<RegistrationResponse> scrapperResponse = restTemplate.exchange(
+            ResponseEntity<RegistrationResponseDTO> scrapperResponse = restTemplate.exchange(
                     scrapperUrl,
                     HttpMethod.POST,
                     new HttpEntity<>(request, getHeaders()),
-                    RegistrationResponse.class
+                    RegistrationResponseDTO.class
             );
 
             System.out.println("Запрос на регистрацию отправился");
@@ -80,7 +82,6 @@ public class AuthController {
                     .body("Ошибка входа: " + e.getMessage());
         }
     }
-
 
     private HttpHeaders getHeaders() {
         HttpHeaders headers = new HttpHeaders();

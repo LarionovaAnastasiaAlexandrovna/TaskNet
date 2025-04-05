@@ -5,7 +5,7 @@ import dto.RegisterRequestDTO;
 import edu.entity.User;
 import enums.UserRole;
 
-public class ConverterRequestDTO {
+public class ConverterAuthRequestDTO {
     public User convert(RegisterRequestDTO registerRequestDTO) {
         User user = new User();
         user.setUserName(registerRequestDTO.getUsername());

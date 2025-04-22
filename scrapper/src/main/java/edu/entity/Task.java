@@ -1,8 +1,5 @@
 package edu.entity;
 
-//import edu.domain.enums.TaskPriority;
-//import edu.domain.enums.TaskStatus;
-
 import enums.TaskStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

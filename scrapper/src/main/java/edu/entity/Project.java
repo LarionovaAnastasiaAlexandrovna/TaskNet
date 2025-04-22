@@ -1,9 +1,10 @@
 package edu.entity;
 
-//import edu.domain.enums.ProjectStatus;
-
+import enums.ProjectStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -28,20 +29,20 @@ public class Project {
     @Column(name = "projectId", nullable = false)
     Long projectId;
 
-    @Column(name = "projectName", nullable = false, length = 255)
+    @Column(name = "projectname", nullable = false, length = 255)
     String projectName;
 
     @Column(name = "description", nullable = false, columnDefinition = "TEXT")
     String description;
 
-    @Column(name = "startDate", nullable = false)
+    @Column(name = "startdate", nullable = false)
     LocalDate startDate;
 
-    @Column(name = "endDate", nullable = false)
+    @Column(name = "enddate", nullable = false)
     LocalDate endDate;
 
-//    @Enumerated(value = EnumType.STRING)
-//    @Column(name = "status", nullable = false, length = 50)
-//    ProjectStatus status;
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "status", nullable = false, length = 50)
+    ProjectStatus status;
 }
 

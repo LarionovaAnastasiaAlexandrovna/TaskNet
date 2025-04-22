@@ -1,0 +1,59 @@
+.main-content {
+  display: flex;
+}
+
+.left-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-right: 20px; /* отступ между левой колонкой и основной частью */
+}
+
+.create-project-button {
+  margin-top: 16px;
+  margin-left: 12px;
+  padding: 10px 14px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal {
+  background-color: white;
+  padding: 24px;
+  border-radius: 12px;
+  width: 400px;
+  max-width: 90%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.modal input, .modal textarea {
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+}

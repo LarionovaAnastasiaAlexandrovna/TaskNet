@@ -47,7 +47,7 @@ public class ProfileController {
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
-            headers.set("X-User-Email", email); // Передаём email через заголовок (например)
+            headers.set("X-User-Email", email);
 
             ResponseEntity<ProfileResponseDTO> scrapperResponse = restTemplate.exchange(
                     scrapperUrl,

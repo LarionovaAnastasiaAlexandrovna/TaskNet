@@ -7,6 +7,7 @@ public class ConverterRequestProjectDTO {
 
     public Project convertProjectDTO(ProjectDTO projectDTO) {
         Project project = new Project();
+        project.setProjectId(projectDTO.getProjectId());
         project.setProjectName(projectDTO.getProjectName());
         project.setDescription(projectDTO.getDescription());
         project.setStartDate(projectDTO.getStartDate());
@@ -16,6 +17,7 @@ public class ConverterRequestProjectDTO {
 
     public ProjectDTO convertProject(Project project) {
         ProjectDTO projectDTO = new ProjectDTO();
+        projectDTO.setProjectId(project.getProjectId());
         projectDTO.setProjectName(project.getProjectName());
         projectDTO.setDescription(project.getDescription());
         projectDTO.setProjectStatus(project.getStatus());

@@ -1,5 +1,6 @@
 package edu.entity;
 
+import enums.TaskPriority;
 import enums.TaskStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -52,9 +53,9 @@ public class Task {
     @Column(name = "category", nullable = false, length = 50)
     String category;
 
-//    @Enumerated(value = EnumType.STRING)
-//    @Column(name = "priority", nullable = false, length = 20)
-//    TaskPriority priority;
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "priority", nullable = false, length = 20)
+    TaskPriority priority;
 
     @Column(name = "description", columnDefinition = "TEXT")
     String description;
@@ -63,6 +64,6 @@ public class Task {
     @JoinColumn(name = "assignedto", foreignKey = @ForeignKey(name = "fk_task_user"))
     User assignedTo;
 
-    @Column(name = "dependencies", columnDefinition = "JSONB")
-    String dependencies;
+//    @Column(name = "dependencies", columnDefinition = "JSONB")
+//    String dependencies;
 }

@@ -26,13 +26,19 @@ public class ConverterRequestProfileDTO {
     }
 
     public List<TaskDTO> convertTasks(List<Task> tasks) {
-        return tasks.stream().map(task -> new TaskDTO(
-                task.getTaskName(),
-                task.getStartDate(),
-                task.getEndDate(),
-                task.getCategory(),
-                task.getDescription(),
-                task.getDependencies()
-        )).collect(Collectors.toList());
+        return tasks.stream()
+                .map(task -> new TaskDTO(
+                        task.getTaskName(),
+                        task.getDescription(),
+                        task.getStatus(),
+                        task.getPriority(),
+                        task.getProject().getProjectId(),
+                        task.getAssignedTo() != null ? task.getAssignedTo().getUserId() : null,
+                        task.getStartDate(),
+                        task.getEndDate(),
+                        task.getCategory()
+//                        task.getDependencies()
+                ))
+                .collect(Collectors.toList());
     }
 }

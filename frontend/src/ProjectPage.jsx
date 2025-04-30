@@ -1,9 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
+import { fetchWithAuth } from "./utils/auth";
 import './ProjectPage.css';
 import './common.css';
 
 const ProjectPage = () => {
+
+  useEffect(() => {
+          fetchWithAuth("http://localhost:8081/api/tasks/recent") // Запрос к API
+              .then(response => response.json())
+              .then(data => setTasks(data))
+              .catch(error => setError(error.message));
+      }, []);
+
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
@@ -16,7 +25,7 @@ const ProjectPage = () => {
   });
 
   const [selectedProject, setSelectedProject] = useState(null); // новый выбранный проект
-  const [projects, setProjects] = useState([]); // список проектов (пока локально
+  const [projects, setProjects] = useState([]); // список проектов
 
   const handleLogoClick = () => {
     navigate('/home');
@@ -27,8 +36,23 @@ const ProjectPage = () => {
   };
 
   const navigateToProfilePage = () => {
-    navigate("/profile");
-  };
+          fetchWithAuth("http://localhost:8081/profile")
+              .then(response => {
+                  if (!response.ok) {
+                      throw new Error("Ошибка при получении профиля");
+                  }
+                  return response.json();
+              })
+              .then(data => {
+                  // Сохраняем полученные данные в localStorage или context (пока в localStorage для простоты)
+                  localStorage.setItem("profileData", JSON.stringify(data));
+                  navigate("/profile"); // Переход на страницу профиля
+              })
+              .catch(error => {
+                  console.error("Ошибка при загрузке профиля:", error);
+                  alert("Не удалось загрузить профиль");
+              });
+      };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

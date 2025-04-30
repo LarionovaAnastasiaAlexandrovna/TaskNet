@@ -8,6 +8,9 @@ import enums.ProjectStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 
 @Service
 public class ProjectService {
@@ -26,4 +29,12 @@ public class ProjectService {
 
         return converter.convertProject(project);
     }
+
+    public List<ProjectDTO> getProjectsByEmail(String email) {
+        List<Project> projects = projectsRepository.findAllByUserEmail(email);
+        return projects.stream()
+                .map(converter::convertProject)
+                .collect(Collectors.toList());
+    }
+
 }

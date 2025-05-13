@@ -1,18 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
+import { fetchWithAuth } from "./utils/auth";
+import { useParams } from 'react-router-dom';
 import './TaskPage.css';
 import './common.css';
 
 const TaskPage = () => {
+  const [selectedTask, setSelectedTask] = useState(null);
+
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
   const [currentUserId, setCurrentUserId] = useState('');
+
+  const [tasks, setTasks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const storedUserId = localStorage.getItem("userId");
   const userId = storedUserId ? parseInt(storedUserId, 10) : 0;
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newTask, setNewTask] = useState({
+    taskId: '',
     taskName: '',
     description: '',
     startDate: '',
@@ -25,6 +34,7 @@ const TaskPage = () => {
 
   const resetModalState = () => {
     setNewTask({
+      taskId: '',
       taskName: '',
       description: '',
       startDate: '',
@@ -54,6 +64,51 @@ const TaskPage = () => {
   const handleLogoClick = () => {
     navigate('/home');
   };
+
+  const getPriorityIcon = (priority) => {
+    const iconMap = {
+        LOWEST: { icon: "⇊", class: "priority-lowest" },
+        LOW: { icon: "↓", class: "priority-low" },
+        MEDIUM: { icon: "=", class: "priority-medium" },
+        HIGH: { icon: "↑", class: "priority-high" },
+        HIGHEST: { icon: "⇈", class: "priority-highest" }
+    };
+    return iconMap[priority] || { icon: "", class: "" };
+  };
+
+  const formatDate = (dateString) => {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('ru-RU', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric'
+      });
+  };
+
+  const handleTaskClick = async (task) => {
+    setSelectedTask(task);
+    navigate(`/task/${task.taskId}`);
+
+    // Обновление даты последнего просмотра на бэке
+    try {
+      await fetchWithAuth(`http://localhost:8081/task/${task.taskId}/view`, {
+        method: "PATCH",
+      });
+    } catch (error) {
+      console.error("Ошибка при обновлении даты просмотра:", error);
+    }
+  };
+
+    useEffect(() => {
+        fetchWithAuth("http://localhost:8081/task/recent")
+            .then(response => {
+                if (!response.ok) throw new Error("Ошибка при получении задач");
+                return response.json();
+            })
+            .then(data => setTasks(data))
+            .catch(error => setError(error.message))
+            .finally(() => setLoading(false)); // <-- завершили загрузку
+    }, []);
 
   useEffect(() => {
     const fetchProjectsAndUsers = async () => {
@@ -143,24 +198,45 @@ const TaskPage = () => {
       </div>
 
       <div className="main-content">
+      <div className="left-panel">
         <div className="sidebar">
+          <div className="sidebar-header">Мои недавние задачи:</div>
           <div className="item-card-group">
-            <div className="item-card">
-              <div className="item-header">
-                <div className="item-title">Task Title</div>
-                <div className="item-deadline">Deadline</div>
-                <div className="item-status">Status</div>
-              </div>
-              <div className="item-body">Task Description</div>
-            </div>
-            {/* Добавить больше карточек задач */}
+              {loading ? (
+                  <p className="loader">Загрузка задач...</p>
+              ) : error ? (
+                  <p style={{ color: "red" }}>Ошибка: {error}</p>
+              ) : tasks.length > 0 ? (
+                  tasks.map((task, index) => {
+                      const { icon, class: priorityClass } = getPriorityIcon(task.priority);
+                      return (
+                          <div
+                            key={index}
+                            className="item-card"
+                            onClick={() => handleTaskClick(task)}>
+                              <div className="item-header">
+                                  <div className="item-title">{task.taskName}</div>
+                                  <div className={`item-priority ${priorityClass}`}>
+                                      {icon}
+                                  </div>
+                                  <div className="item-deadline">{formatDate(task.startDate)}</div>
+                              </div>
+                              <div className="item-body">{task.description}</div>
+                          </div>
+                      );
+                  })
+              ) : (
+                  <p>Задач пока нет</p>
+              )}
           </div>
         </div>
 
-        <div className="content-area">
-          <button className="create-task-button" onClick={() => setIsModalOpen(true)}>
+{/*         <div className="content-area"> */}
+          <button className="create-button" onClick={() => setIsModalOpen(true)}>
             + Создать новую задачу
           </button>
+{/*         </div> */}
+{/*       </div> */}
 
           {isModalOpen && (
             <div className="modal-overlay" onClick={() => {resetModalState();
@@ -228,10 +304,10 @@ const TaskPage = () => {
                   onChange={handleInputChange}
                 >
                   <option value="">Выберите приоритет</option>
-                  <option value="LOW">LOWEST</option>
+                  <option value="LOWEST">LOWEST</option>
                   <option value="LOW">LOW</option>
                   <option value="MEDIUM">MEDIUM</option>
-                  <option value="HIGH">HIGHEST</option>
+                  <option value="HIGHEST">HIGHEST</option>
                   <option value="HIGH">HIGH</option>
                 </select>
 
@@ -242,6 +318,24 @@ const TaskPage = () => {
                                           setIsModalOpen(false);}}>Отмена</button>
                 </div>
               </div>
+            </div>
+          )}
+        </div>
+
+        <div className="content-area">
+          {selectedTask ? (
+            <div className="task-details">
+              <h2>{selectedTask.taskName}</h2>
+              <p><strong>Описание:</strong> {selectedTask.description}</p>
+              <p><strong>Дата начала:</strong> {formatDate(selectedTask.startDate)}</p>
+              <p><strong>Дата окончания:</strong> {formatDate(selectedTask.endDate)}</p>
+              <p><strong>Категория:</strong> {selectedTask.category}</p>
+              <p><strong>Приоритет:</strong> {selectedTask.priority}</p>
+              <p><strong>Проект:</strong> {selectedTask.project?.projectName || 'Не указано'}</p>
+            </div>
+          ) : (
+            <div className="default-hint">
+              Для более подробного просмотра задачи нажмите на неё
             </div>
           )}
         </div>

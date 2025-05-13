@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="2025-05-08-6-add-column-Tasks-Projects" author="LAA">
+        <sql><![CDATA[
+        ALTER TABLE Tasks ADD COLUMN date_create DATE DEFAULT NOW();
+        ALTER TABLE Tasks ADD COLUMN date_last_vue DATE DEFAULT NOW();
+        ALTER TABLE Projects ADD COLUMN date_create DATE DEFAULT NOW();
+    ]]></sql>
+    </changeSet>
+
+</databaseChangeLog>

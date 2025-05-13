@@ -133,7 +133,7 @@ const ProjectPage = () => {
             </div>
           </div>
 
-          <button className="create-project-button" onClick={() => setIsModalOpen(true)}>
+          <button className="create-button" onClick={() => setIsModalOpen(true)}>
             + Создать новый проект
           </button>
         </div>

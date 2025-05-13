@@ -128,3 +128,50 @@ body, html {
   align-items: flex-start;
   padding-bottom: 15px;
 }
+
+.left-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-right: 20px; /* отступ между левой колонкой и основной частью */
+}
+
+.create-button {
+  margin-top: 16px;
+  margin-left: 12px;
+  padding: 10px 14px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+/* Loader */
+.loader {
+  font-size: 16px;
+  color: gray;
+  padding: 10px;
+}
+
+/* Priority icon colors */
+.priority-lowest { color: gray; }
+.priority-low { color: lightblue; }
+.priority-medium { color: orange; }
+.priority-high { color: darkorange; }
+.priority-highest { color: red; }
+
+/* Status styles */
+.status {
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: bold;
+  display: inline-block;
+}
+
+.status-TODO { background-color: #f0f0f0; color: #333; }
+.status-IN_PROGRESS { background-color: #ffe58f; color: #ad6800; }
+.status-DONE { background-color: #b7eb8f; color: #389e0d; }
+.status-BLOCKED { background-color: #ffccc7; color: #cf1322; }

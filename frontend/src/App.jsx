@@ -19,6 +19,7 @@ const App = () => {
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/project" element={<ProjectPage />} />
                 <Route path="/task" element={<TaskPage />} />
+                <Route path="/task/:taskId" element={<TaskPage />} />
             </Routes>
         </Router>
     );

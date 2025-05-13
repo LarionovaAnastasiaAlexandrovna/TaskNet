@@ -8,7 +8,8 @@ import edu.entity.Task;
 import edu.entity.User;
 import edu.repository.TasksRepository;
 import edu.repository.UsersRepository;
-import edu.util.ConverterRequestProfileDTO;
+import edu.util.ConverterRequestUserDTO;
+import edu.util.ConverterTaskDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -25,17 +26,19 @@ public class ProfileUserServise {
     @Autowired
     private TasksRepository tasksRepository;
 
-    private final ConverterRequestProfileDTO converter = new ConverterRequestProfileDTO();
+    private final ConverterTaskDTO converterTask = new ConverterTaskDTO();
+
+    private final ConverterRequestUserDTO converterUser = new ConverterRequestUserDTO();
 
     public ProfileResponseDTO getProfileByEmail(String email) {
         User user = usersRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
 
-        UserDTO userDTO = converter.convertUser(user);
+        UserDTO userDTO = converterUser.convertUser(user);
 
         List<Task> tasks = tasksRepository.findAllByAssignedTo(user);
 
-        List<TaskDTO> taskDTOs = converter.convertTasks(tasks);
+        List<TaskDTO> taskDTOs = converterTask.convertTasks(tasks);
 
         return new ProfileResponseDTO(userDTO, taskDTOs);
     }

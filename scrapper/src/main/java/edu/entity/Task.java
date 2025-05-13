@@ -64,6 +64,12 @@ public class Task {
     @JoinColumn(name = "assignedto", foreignKey = @ForeignKey(name = "fk_task_user"))
     User assignedTo;
 
+    @Column(name = "date_create")
+    LocalDate dateCreate;
+
+    @Column(name = "date_last_vue")
+    LocalDate dateLastView;
+
 //    @Column(name = "dependencies", columnDefinition = "JSONB")
 //    String dependencies;
 }

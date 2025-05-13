@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { fetchWithAuth } from "./utils/auth";
 import './ProfilePage.css';
 
 const ProfilePage = () => {
@@ -9,12 +10,51 @@ const ProfilePage = () => {
   const [formData, setFormData] = useState({});
   const token = localStorage.getItem("token");
 
+  const getPriorityIcon = (priority) => {
+      const iconMap = {
+          LOWEST: { icon: "⇊", class: "priority-lowest" },
+          LOW: { icon: "↓", class: "priority-low" },
+          MEDIUM: { icon: "=", class: "priority-medium" },
+          HIGH: { icon: "↑", class: "priority-high" },
+          HIGHEST: { icon: "⇈", class: "priority-highest" }
+      };
+      return iconMap[priority] || { icon: "", class: "" };
+  };
+
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('ru-RU', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        });
+    };
+
   useEffect(() => {
     const storedData = localStorage.getItem('profileData');
+
     if (storedData) {
       const parsed = JSON.parse(storedData);
       setProfileData(parsed);
-      setFormData(parsed.userDTO); // Копируем userDTO в formData
+      setFormData(parsed.userDTO);
+    } else if (token) {
+      fetch('http://localhost:8081/profile', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        }
+      })
+        .then(res => {
+          if (!res.ok) throw new Error("Ошибка загрузки профиля");
+          return res.json();
+        })
+        .then(data => {
+          const newProfileData = { userDTO: data, tasks: data.tasks || [] };
+          setProfileData(newProfileData);
+          setFormData(data);
+          localStorage.setItem('profileData', JSON.stringify(newProfileData));
+        })
+        .catch(err => console.error("Ошибка при загрузке:", err));
     }
   }, []);
 
@@ -67,6 +107,8 @@ const ProfilePage = () => {
   };
 
   const handleExit = () => {
+    localStorage.removeItem('profileData');
+    localStorage.removeItem('token');
     navigate('/auth/login');
   };
 
@@ -106,15 +148,21 @@ const ProfilePage = () => {
           <div className="sidebar-header">Мои недавние задачи:</div>
           <div className="item-card-group">
             {tasks?.length > 0 ? (
-              tasks.map((task, index) => (
-                <div key={index} className="item-card">
-                  <div className="item-header">
-                    <div className="item-title">{task.taskName}</div>
-                    <div className="item-deadline">{task.startDate}</div>
-                  </div>
-                  <div className="item-body">{task.description}</div>
-                </div>
-              ))
+              tasks.map((task, index) => {
+                  const { icon, class: priorityClass } = getPriorityIcon(task.priority);
+                  return (
+                      <div key={index} className="item-card">
+                          <div className="item-header">
+                              <div className="item-title">{task.taskName}</div>
+                              <div className={`item-priority ${priorityClass}`}>
+                                  {icon}
+                              </div>
+                              <div className="item-deadline">{formatDate(task.startDate)}</div>
+                          </div>
+                          <div className="item-body">{task.description}</div>
+                      </div>
+                  );
+              })
             ) : (
               <p>Нет задач</p>
             )}

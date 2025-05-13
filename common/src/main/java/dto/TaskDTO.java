@@ -19,6 +19,9 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class TaskDTO {
+
+    private Long taskId;
+
     private String taskName;
 
     private String description;
@@ -38,6 +41,12 @@ public class TaskDTO {
     private LocalDate endDate;
 
     private String category;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate dateCreate;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate dateLastView;
 
 //    private String dependencies;
 }

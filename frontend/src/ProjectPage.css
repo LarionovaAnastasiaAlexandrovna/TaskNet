@@ -2,25 +2,6 @@
   display: flex;
 }
 
-.left-panel {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  margin-right: 20px; /* отступ между левой колонкой и основной частью */
-}
-
-.create-project-button {
-  margin-top: 16px;
-  margin-left: 12px;
-  padding: 10px 14px;
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
 .modal-overlay {
   position: fixed;
   top: 0;

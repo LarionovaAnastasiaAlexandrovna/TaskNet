@@ -9,4 +9,5 @@
     <include file="2025-03-17-3-alter-table-ProjectUsers.xml" relativeToChangelogFile="true" />
     <include file="2025-04-02-4-modify-columns-Users.xml" relativeToChangelogFile="true" />
     <include file="2025-04-30-5-delete-column-Tasks.xml" relativeToChangelogFile="true" />
+    <include file="2025-05-08-6-add-column-Tasks-Projects.xml" relativeToChangelogFile="true" />
 </databaseChangeLog>

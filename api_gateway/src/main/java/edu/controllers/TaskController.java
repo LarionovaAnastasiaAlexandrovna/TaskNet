@@ -12,9 +12,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -103,7 +103,7 @@ public class TaskController {
     }
 
     @CrossOrigin(origins = "http://localhost:5173")
-    @PatchMapping("/{id}/view")
+    @PutMapping("/{id}/view")
     public ResponseEntity<?> updateLastView(@PathVariable Long id,
                                             @RequestHeader("Authorization") String authHeader) {
 
@@ -122,19 +122,19 @@ public class TaskController {
 
             HttpEntity<Void> emptyRequest = new HttpEntity<>(null);
 
-            // Выполняем PATCH-запрос без тела
-            // пока не рабочий
             // TODO переделать под WebClient
             ResponseEntity<Void> scrapperResponse = restTemplate.exchange(
                     scrapperUrl,
-                    HttpMethod.PATCH,
+                    HttpMethod.PUT,
                     emptyRequest,
                     Void.class
             );
 
             System.out.println("Запрос на обновление последнего просмотра задачи отправлен");
             return ResponseEntity.status(scrapperResponse.getStatusCode())
-                    .body(scrapperResponse.getBody());
+                    .body(scrapperResponse.getStatusCode().is2xxSuccessful()
+                            ? null
+                            : "Ошибка при обновлении просмотра задачи");
 
         } catch (Exception e) {
             System.out.println("Запрос на обновление последнего просмотра задачи не отправился");

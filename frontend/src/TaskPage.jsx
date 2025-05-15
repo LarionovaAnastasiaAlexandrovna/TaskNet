@@ -92,7 +92,7 @@ const TaskPage = () => {
     // Обновление даты последнего просмотра на бэке
     try {
       await fetchWithAuth(`http://localhost:8081/task/${task.taskId}/view`, {
-        method: "PATCH",
+        method: "PUT",
       });
     } catch (error) {
       console.error("Ошибка при обновлении даты просмотра:", error);

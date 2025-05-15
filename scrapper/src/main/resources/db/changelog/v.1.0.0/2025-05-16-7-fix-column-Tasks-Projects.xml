@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="2025-05-16-7-fix-column-Tasks-Projects" author="LAA">
+        <sql><![CDATA[
+        ALTER TABLE Tasks DROP COLUMN IF EXISTS date_last_vue;
+
+        ALTER TABLE Tasks ALTER COLUMN date_create TYPE TIMESTAMP USING date_create::timestamp;
+        ALTER TABLE Tasks ALTER COLUMN date_create SET DEFAULT CURRENT_TIMESTAMP;
+
+        ALTER TABLE Projects ALTER COLUMN date_create TYPE TIMESTAMP USING date_create::timestamp;
+        ALTER TABLE Projects ALTER COLUMN date_create SET DEFAULT CURRENT_TIMESTAMP;
+
+        ALTER TABLE Tasks ADD COLUMN IF NOT EXISTS date_last_view TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+    ]]></sql>
+    </changeSet>
+
+</databaseChangeLog>

@@ -67,7 +67,7 @@ public class Task {
     @Column(name = "date_create")
     LocalDate dateCreate;
 
-    @Column(name = "date_last_vue")
+    @Column(name = "date_last_view")
     LocalDate dateLastView;
 
 //    @Column(name = "dependencies", columnDefinition = "JSONB")

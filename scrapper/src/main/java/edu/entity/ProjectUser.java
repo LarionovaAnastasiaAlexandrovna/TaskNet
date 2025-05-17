@@ -8,7 +8,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -29,12 +28,10 @@ public class ProjectUser {
     Long id;
 
     @ManyToOne
-    @MapsId("projectId")
-    @JoinColumn(name = "projectId", nullable = false, foreignKey = @ForeignKey(name = "fk_project_users_project"))
+    @JoinColumn(name = "idproject", nullable = false, foreignKey = @ForeignKey(name = "fk_project_users_project"))
     Project project;
 
     @ManyToOne
-    @MapsId("userId")
-    @JoinColumn(name = "userId", nullable = false, foreignKey = @ForeignKey(name = "fk_project_users_user"))
+    @JoinColumn(name = "iduser", nullable = false, foreignKey = @ForeignKey(name = "fk_project_users_user"))
     User user;
 }

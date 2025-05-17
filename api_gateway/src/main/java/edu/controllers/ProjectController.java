@@ -44,10 +44,17 @@ public class ProjectController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Недействительный токен");
             }
 
+            String email = jwtUtil.extractEmail(token);
+            System.out.println("Email из токена: " + email);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.set("X-User-Email", email);
+
             ResponseEntity<ProjectDTO> scrapperResponse = restTemplate.exchange(
                     scrapperUrl,
                     HttpMethod.POST,
-                    new HttpEntity<>(request),
+                    new HttpEntity<>(request, headers),
                     ProjectDTO.class
             );
 
@@ -80,7 +87,7 @@ public class ProjectController {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("X-User-Email", email); // Передаём email через заголовок
+        headers.set("X-User-Email", email);
 
             ResponseEntity<List<ProjectDTO>> scrapperResponse = restTemplate.exchange(
                     scrapperUrl,

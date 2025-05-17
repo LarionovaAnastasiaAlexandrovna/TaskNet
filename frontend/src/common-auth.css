@@ -1,7 +1,7 @@
 /* Общие стили */
-* {
+/** {
     box-sizing: border-box;
-}
+}*/
 
 body {
     font-family: 'Anonymous Pro', monospace;

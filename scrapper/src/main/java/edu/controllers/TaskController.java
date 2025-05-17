@@ -26,9 +26,10 @@ public class TaskController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<?> createProject(@Valid @RequestBody TaskDTO taskDTO) {
+    public ResponseEntity<?> createProject(@RequestHeader("X-User-Email") String email,
+                                           @Valid @RequestBody TaskDTO taskDTO) {
         System.out.println("Запрос на создание новой задачи пришел в scrapper");
-        TaskDTO saveTaskDTO = taskService.saveNew(taskDTO);
+        TaskDTO saveTaskDTO = taskService.saveNew(taskDTO, email);
         return ResponseEntity.status(HttpStatus.CREATED).body(saveTaskDTO);
     }
 

@@ -14,7 +14,7 @@ public class ConverterTaskDTO {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    public Task convertTaskDTO(TaskDTO taskDTO) {
+    public Task convertTaskDTO(TaskDTO taskDTO, User user) {
         Task task = new Task();
         task.setTaskId(taskDTO.getTaskId());
         task.setTaskName(taskDTO.getTaskName());
@@ -26,13 +26,8 @@ public class ConverterTaskDTO {
         task.setCategory(taskDTO.getCategory());
         task.setStatus(TaskStatus.OPEN);
         task.setDateCreate(taskDTO.getDateCreate());
-        task.setDateLastView(task.getDateLastView());
-
-        if (taskDTO.getUserId() != null) {
-            User user = new User();
-            user.setUserId(taskDTO.getUserId());
-            task.setAssignedTo(user);
-        }
+        task.setDateLastView(taskDTO.getDateLastView());
+        task.setAssignedTo(user);
 
         if (taskDTO.getProjectId() != null) {
             Project project = new Project();
@@ -58,7 +53,7 @@ public class ConverterTaskDTO {
         taskDTO.setDateLastView(task.getDateLastView());
 
         if (task.getAssignedTo() != null) {
-            taskDTO.setUserId(task.getAssignedTo().getUserId());
+            taskDTO.setAssignedTo(task.getAssignedTo().getUserId());
         }
 
         if (task.getProject() != null) {

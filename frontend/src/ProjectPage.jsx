@@ -6,13 +6,6 @@ import './common.css';
 
 const ProjectPage = () => {
 
-  useEffect(() => {
-          fetchWithAuth("http://localhost:8081/api/tasks/recent") // Запрос к API
-              .then(response => response.json())
-              .then(data => setTasks(data))
-              .catch(error => setError(error.message));
-      }, []);
-
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
@@ -44,9 +37,8 @@ const ProjectPage = () => {
                   return response.json();
               })
               .then(data => {
-                  // Сохраняем полученные данные в localStorage или context (пока в localStorage для простоты)
                   localStorage.setItem("profileData", JSON.stringify(data));
-                  navigate("/profile"); // Переход на страницу профиля
+                  navigate("/profile");
               })
               .catch(error => {
                   console.error("Ошибка при загрузке профиля:", error);
@@ -98,6 +90,32 @@ const ProjectPage = () => {
       alert("Произошла ошибка при создании проекта.");
     }
   };
+
+  useEffect(() => {
+      const fetchProjectsAndUsers = async () => {
+        try {
+          const projectResponse = await fetch('http://localhost:8081/project/all', {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`,
+            }
+          });
+
+          if (!projectResponse.ok) {
+            throw new Error("Ошибка загрузки проектов");
+          }
+
+          const projects = await projectResponse.json();
+          setProjects(projects);
+
+        } catch (error) {
+          console.error('Ошибка при получении данных:', error);
+        }
+      };
+
+      fetchProjectsAndUsers();
+    }, [token]);
 
   return (
     <div className="base-page">

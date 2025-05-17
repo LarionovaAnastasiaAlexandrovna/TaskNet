@@ -46,10 +46,17 @@ public class TaskController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Недействительный токен");
             }
 
+            String email = jwtUtil.extractEmail(token);
+            System.out.println("Email из токена: " + email);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.set("X-User-Email", email);
+
             ResponseEntity<TaskDTO> scrapperResponse = restTemplate.exchange(
                     scrapperUrl,
                     HttpMethod.POST,
-                    new HttpEntity<>(request),
+                    new HttpEntity<>(request, headers),
                     TaskDTO.class
             );
 

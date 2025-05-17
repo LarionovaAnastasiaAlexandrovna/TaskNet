@@ -12,6 +12,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -20,6 +21,7 @@ import lombok.ToString;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Setter
 @Getter
@@ -64,12 +66,18 @@ public class Task {
     @JoinColumn(name = "assignedto", foreignKey = @ForeignKey(name = "fk_task_user"))
     User assignedTo;
 
-    @Column(name = "date_create")
-    LocalDate dateCreate;
+    @Column(name = "date_create", nullable = false, updatable = false)
+    LocalDateTime dateCreate;
 
     @Column(name = "date_last_view")
-    LocalDate dateLastView;
+    LocalDateTime dateLastView;
 
 //    @Column(name = "dependencies", columnDefinition = "JSONB")
 //    String dependencies;
+
+    @PrePersist
+    protected void onCreate() {
+        this.dateCreate = LocalDateTime.now();
+        this.dateLastView = LocalDateTime.now();
+    }
 }

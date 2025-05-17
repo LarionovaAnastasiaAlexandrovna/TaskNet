@@ -24,9 +24,10 @@ public class ProjectUserController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<?> createProject(@Valid @RequestBody ProjectDTO createProjectRequestDTO) {
+    public ResponseEntity<?> createProject(@Valid @RequestBody ProjectDTO createProjectRequestDTO,
+                                           @RequestHeader("X-User-Email") String email) {
         System.out.println("Запрос на регистрацию пришел в scrapper");
-        ProjectDTO saveProject = projectService.saveNew(createProjectRequestDTO);
+        ProjectDTO saveProject = projectService.saveNew(createProjectRequestDTO, email);
         return ResponseEntity.status(HttpStatus.CREATED).body(saveProject);
     }
 

@@ -1,11 +1,14 @@
 package edu.controllers;
 
+import dto.EmailRequestDTO;
 import dto.ProjectDTO;
+import dto.UserInProjectDTO;
 import edu.service.ProjectService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -37,6 +40,31 @@ public class ProjectUserController {
         try {
             List<ProjectDTO> projectDTOS = projectService.getProjectsByEmail(email);
             return ResponseEntity.ok(projectDTOS);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Ошибка Scrapper-сервиса: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/{id}/all-users")
+    public ResponseEntity<?> getAllProjectUsers(@PathVariable Long id) {
+        System.out.println("Scrapper получил id: " + id);
+        try {
+            List<UserInProjectDTO> users = projectService.getUsersByProjectId(id);
+            return ResponseEntity.ok(users);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Ошибка Scrapper-сервиса: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/{id}/add-user")
+    public ResponseEntity<?> addUserInProject(@PathVariable Long id,
+                                              @RequestBody EmailRequestDTO request) {
+        System.out.println("Scrapper получил email: " + request.getEmail());
+        try {
+            projectService.addUserInProjectByEmail(request.getEmail(), id);
+            return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Ошибка Scrapper-сервиса: " + e.getMessage());

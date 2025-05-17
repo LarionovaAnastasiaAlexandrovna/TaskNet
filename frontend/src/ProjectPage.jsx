@@ -6,6 +6,10 @@ import './common.css';
 
 const ProjectPage = () => {
 
+  const [isMembersModalOpen, setIsMembersModalOpen] = useState(false);
+  const [projectUsers, setProjectUsers] = useState([]);
+  const [newUserEmail, setNewUserEmail] = useState('');
+
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
@@ -88,6 +92,55 @@ const ProjectPage = () => {
     } catch (error) {
       console.error("Ошибка:", error);
       alert("Произошла ошибка при создании проекта.");
+    }
+  };
+
+  const fetchProjectUsers = async (projectId) => {
+    try {
+      const response = await fetch(`http://localhost:8081/project/${projectId}/all-users`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Ошибка при загрузке участников проекта');
+      }
+
+      const users = await response.json();
+      setProjectUsers(users);
+    } catch (error) {
+      console.error(error);
+      alert('Не удалось загрузить участников');
+    }
+  };
+
+  const handleOpenMembersModal = () => {
+    if (!selectedProject) return;
+    fetchProjectUsers(selectedProject.projectId); // тут важно имя поля
+    setIsMembersModalOpen(true);
+  };
+
+  const handleAddUserToProject = async () => {
+    try {
+      const response = await fetch(`http://localhost:8081/project/${selectedProject.projectId}/add-user`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ email: newUserEmail })
+      });
+
+      if (!response.ok) {
+        throw new Error('Ошибка при добавлении пользователя');
+      }
+
+      setNewUserEmail('');
+      fetchProjectUsers(selectedProject.projectId); // обновим список участников
+    } catch (error) {
+      console.error(error);
+      alert('Ошибка при добавлении пользователя');
     }
   };
 
@@ -179,6 +232,9 @@ const ProjectPage = () => {
                     <li>Задачи пока нет</li>
                   </ul>
                 </div>
+                <button className="add-members-button" onClick={handleOpenMembersModal}>
+                  Участники
+                </button>
               </div>
             </>
           ) : (
@@ -231,6 +287,32 @@ const ProjectPage = () => {
           </div>
         </div>
       )}
+
+    {isMembersModalOpen && (
+      <div className="modal-overlay" onClick={() => setIsMembersModalOpen(false)}>
+        <div className="modal" onClick={(e) => e.stopPropagation()}>
+          <h2>Участники проекта</h2>
+
+          <input
+            type="email"
+            placeholder="Введите email"
+            value={newUserEmail}
+            onChange={(e) => setNewUserEmail(e.target.value)}
+          />
+          <button onClick={handleAddUserToProject}>Добавить</button>
+
+          <ul>
+            {projectUsers.map(user => (
+              <li key={user.userId}>
+                {user.userName} ({user.email})
+              </li>
+            ))}
+          </ul>
+
+          <button onClick={() => setIsMembersModalOpen(false)}>Закрыть</button>
+        </div>
+      </div>
+    )}
     </div>
   );
 };

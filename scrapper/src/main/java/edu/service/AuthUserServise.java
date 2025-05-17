@@ -4,7 +4,7 @@ import dto.LoginRequestDTO;
 import dto.RegisterRequestDTO;
 import edu.entity.User;
 import edu.repository.UsersRepository;
-import edu.util.ConverterAuthRequestDTO;
+import edu.util.ConverterUserRequestDTO;
 import exception.UserException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ public class AuthUserServise {
     @Autowired
     private UsersRepository repository;
 
-    private final ConverterAuthRequestDTO converter = new ConverterAuthRequestDTO();
+    private final ConverterUserRequestDTO converter = new ConverterUserRequestDTO();
 
     public User save(RegisterRequestDTO registerRequestDTO) {
         System.out.println("Пытаемся сделать user = converter.convert(registerRequestDTO)");

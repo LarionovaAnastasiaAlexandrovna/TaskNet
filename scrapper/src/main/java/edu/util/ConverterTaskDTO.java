@@ -65,22 +65,26 @@ public class ConverterTaskDTO {
 
     public List<TaskDTO> convertTasks(List<Task> tasks) {
         return tasks.stream()
-                .map(task -> new TaskDTO(
-                        task.getTaskId(),
-                        task.getTaskName(),
-                        task.getDescription(),
-                        task.getStatus(),
-                        task.getPriority(),
-                        task.getProject().getProjectId(),
-                        task.getProject().getProjectName(),
-                        task.getAssignedTo() != null ? task.getAssignedTo().getUserId() : null,
-                        task.getStartDate(),
-                        task.getEndDate(),
-                        task.getCategory(),
-                        task.getDateCreate(),
-                        task.getDateLastView()
-//                        task.getDependencies()
-                ))
+                .map(task -> {
+                    assert task.getAssignedTo() != null;
+                    return new TaskDTO(
+                            task.getTaskId(),
+                            task.getTaskName(),
+                            task.getDescription(),
+                            task.getStatus(),
+                            task.getPriority(),
+                            task.getProject().getProjectId(),
+                            task.getProject().getProjectName(),
+                            task.getAssignedTo().getUserId(),
+                            task.getAssignedTo().getEmail(),
+                            task.getStartDate(),
+                            task.getEndDate(),
+                            task.getCategory(),
+                            task.getDateCreate(),
+                            task.getDateLastView()
+    //                        task.getDependencies()
+                    );
+                })
                 .collect(Collectors.toList());
     }
 

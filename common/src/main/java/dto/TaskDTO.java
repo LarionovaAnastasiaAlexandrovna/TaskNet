@@ -38,6 +38,8 @@ public class TaskDTO {
 
     private Long assignedTo;
 
+    private String email;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate startDate;
 

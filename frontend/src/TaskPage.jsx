@@ -29,6 +29,7 @@ const TaskPage = () => {
     taskId: '',
     taskName: '',
     description: '',
+    email: '',
     startDate: '',
     endDate: '',
     projectId: '',
@@ -42,6 +43,7 @@ const TaskPage = () => {
     setNewTask({
       taskName: '',
       description: '',
+      email: '',
       startDate: '',
       endDate: '',
       projectId: '',
@@ -154,11 +156,33 @@ const TaskPage = () => {
     }
   };
 
+  const [projectMembers, setProjectMembers] = useState([]);
+
   useEffect(() => {
     if (selectedTask) {
       setFormData(selectedTask);
     }
   }, [selectedTask]);
+
+  useEffect(() => {
+    const fetchProjectMembers = async () => {
+      if (!selectedTask?.projectId || !token) return;
+      try {
+        const response = await fetch(`http://localhost:8081/project/${selectedTask.projectId}/all-users`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!response.ok) throw new Error('Failed to load project members');
+        const data = await response.json();
+        setProjectMembers(data);
+      } catch (err) {
+        console.error('Ошибка загрузки участников проекта:', err);
+      }
+    };
+
+    if (isEditing) {
+      fetchProjectMembers();
+    }
+  }, [isEditing, selectedTask?.projectId, token]);
 
   useEffect(() => {
       fetchWithAuth("http://localhost:8081/task/recent")
@@ -406,6 +430,26 @@ const TaskPage = () => {
                 ) : selectedTask.description}
               </p>
 
+              <p><strong>Назначено на:</strong>
+               {isEditing ? (
+                 <div className="form-group">
+                   <select
+                     name="assignedTo"
+                     value={formData.assignedTo || ''}
+                     onChange={handleFormChange}
+                   >
+                     <option value="">-- Выберите исполнителя --</option>
+                     {projectMembers.map(member => (
+                       <option key={member.userId} value={member.userId}>
+                         {member.email}
+                       </option>
+                     ))}
+                   </select>
+                 </div>
+               ) : (
+                 selectedTask.email
+               )}
+              </p>
               <p><strong>Дата начала:</strong> {formatDate(selectedTask.startDate)}</p>
               <p><strong>Дата окончания:</strong> {formatDate(selectedTask.endDate)}</p>
 

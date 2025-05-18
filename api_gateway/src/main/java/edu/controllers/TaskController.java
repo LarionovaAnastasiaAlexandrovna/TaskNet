@@ -149,4 +149,42 @@ public class TaskController {
                     .body("Ошибка создания задачи: " + e.getMessage());
         }
     }
+
+    @CrossOrigin(origins = "http://localhost:5173")
+    @PutMapping("/{id}/update")
+    public ResponseEntity<?> updateTask(@PathVariable Long id,
+                                        @RequestHeader("Authorization") String authHeader,
+                                        @RequestBody TaskDTO taskDTO) {
+        System.out.println("Запрос прилетает: обновление задачи");
+
+        String scrapperUrl = "http://localhost:8082/innerprosses/task/" + id + "/update";
+
+        try {
+            String token = authHeader.startsWith("Bearer ") ? authHeader.substring(7) : authHeader;
+
+            if (!jwtUtil.validateToken(token)) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Недействительный токен");
+            }
+
+            HttpEntity<TaskDTO> requestEntity = new HttpEntity<>(taskDTO);
+
+            ResponseEntity<TaskDTO> scrapperResponse = restTemplate.exchange(
+                    scrapperUrl,
+                    HttpMethod.PUT,
+                    requestEntity,
+                    TaskDTO.class
+            );
+
+            System.out.println("Запрос на обновление задачи отправлен");
+            return ResponseEntity.status(scrapperResponse.getStatusCode()).body(scrapperResponse.getBody());
+
+        } catch (Exception e) {
+            System.out.println("Запрос на обновление задачи не отправился");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Ошибка обновления задачи: " + e.getMessage());
+        }
+    }
 }
+
+//TODO: исправить баг невозможности редактировать текстовые поля задачи в режиме редактирование
+//TODO: исправить обновление отображения задачи на вебе при её обновлении

@@ -1,5 +1,6 @@
 package edu.controllers;
 
+import dto.GeneraleResponseDTO;
 import dto.TaskDTO;
 import edu.service.TaskService;
 import jakarta.validation.Valid;
@@ -55,6 +56,17 @@ public class TaskController {
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Ошибка Scrapper-сервиса: " + e.getMessage());
+        }
+    }
+
+    @PutMapping("/{id}/update")
+    public ResponseEntity<?> updateTask(@RequestBody TaskDTO taskDTO) {
+        try {
+            GeneraleResponseDTO responseDTO = taskService.updateTask(taskDTO);
+            return ResponseEntity.ok(responseDTO);
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Ошибка Scrapper-сервиса: " + e.getMessage());
         }

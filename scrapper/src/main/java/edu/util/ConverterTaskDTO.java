@@ -72,6 +72,7 @@ public class ConverterTaskDTO {
                         task.getStatus(),
                         task.getPriority(),
                         task.getProject().getProjectId(),
+                        task.getProject().getProjectName(),
                         task.getAssignedTo() != null ? task.getAssignedTo().getUserId() : null,
                         task.getStartDate(),
                         task.getEndDate(),
@@ -81,6 +82,27 @@ public class ConverterTaskDTO {
 //                        task.getDependencies()
                 ))
                 .collect(Collectors.toList());
+    }
+
+    public Task updateTaskFromTaskDTO(Task task, TaskDTO taskDTO) {
+        if (taskDTO.getTaskName() != null) {
+            task.setTaskName(taskDTO.getTaskName());
+        }
+        if (taskDTO.getDescription() != null) {
+            task.setDescription(taskDTO.getDescription());
+        }
+        if (taskDTO.getCategory() != null) {
+            task.setCategory(taskDTO.getCategory());
+        }
+        if (taskDTO.getPriority() != null) {
+            task.setPriority(taskDTO.getPriority());
+        }
+        if (taskDTO.getAssignedTo() != null) {
+            User user = new User();
+            user.setUserId(taskDTO.getAssignedTo());
+            task.setAssignedTo(user);
+        }
+        return task;
     }
 }
 

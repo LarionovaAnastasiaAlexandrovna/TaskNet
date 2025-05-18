@@ -34,6 +34,8 @@ public class TaskDTO {
 
     private Long projectId;
 
+    private String projectName;
+
     private Long assignedTo;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")

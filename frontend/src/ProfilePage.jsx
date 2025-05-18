@@ -180,11 +180,7 @@ const ProfilePage = () => {
                   <input name="userName" value={user.userName} onChange={handleInputChange} />
                 ) : user.userName}
               </p>
-              <p><strong>Email:</strong>
-                {isEditing ? (
-                  <input name="email" value={user.email} onChange={handleInputChange} />
-                ) : user.email}
-              </p>
+              <p><strong>Email:</strong>{user.email}</p>
               <p><strong>Роль:</strong> {user.role}</p>
               <p><strong>Соцсети:</strong>
                 {isEditing ? (

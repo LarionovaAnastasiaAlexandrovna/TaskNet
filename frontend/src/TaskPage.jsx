@@ -8,6 +8,8 @@ import './common.css';
 const TaskPage = () => {
   const [selectedTask, setSelectedTask] = useState(null);
 
+  const priorities = ["LOWEST", "LOW", "MEDIUM", "HIGH", "HIGHEST"];
+
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
   const [currentUserId, setCurrentUserId] = useState('');
@@ -19,6 +21,9 @@ const TaskPage = () => {
   const storedUserId = localStorage.getItem("userId");
   const userId = storedUserId ? parseInt(storedUserId, 10) : 0;
 
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState(selectedTask || {});
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newTask, setNewTask] = useState({
     taskId: '',
@@ -27,6 +32,7 @@ const TaskPage = () => {
     startDate: '',
     endDate: '',
     projectId: '',
+    projectName: '',
     category: '',
     priority: '',
     assignedTo: ''
@@ -34,12 +40,12 @@ const TaskPage = () => {
 
   const resetModalState = () => {
     setNewTask({
-      taskId: '',
       taskName: '',
       description: '',
       startDate: '',
       endDate: '',
       projectId: '',
+      projectName: '',
       category: '',
       priority: '',
       assignedTo: ''
@@ -87,6 +93,7 @@ const TaskPage = () => {
 
   const handleTaskClick = async (task) => {
     setSelectedTask(task);
+    console.log('Выбранная задача:', task);
     navigate(`/task/${task.taskId}`);
 
     // Обновление даты последнего просмотра на бэке
@@ -99,16 +106,70 @@ const TaskPage = () => {
     }
   };
 
-    useEffect(() => {
-        fetchWithAuth("http://localhost:8081/task/recent")
-            .then(response => {
-                if (!response.ok) throw new Error("Ошибка при получении задач");
-                return response.json();
-            })
-            .then(data => setTasks(data))
-            .catch(error => setError(error.message))
-            .finally(() => setLoading(false)); // <-- завершили загрузку
-    }, []);
+  const handleEditToggle = () => {
+    if (isEditing) {
+      handleSaveTaskChanges();
+    } else {
+      setFormData(selectedTask);
+      setIsEditing(true);
+    }
+    setIsEditing(!isEditing);
+  };
+
+  const handleFormChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSaveTaskChanges = async () => {
+    if (!token) {
+      console.error("Token is not defined");
+      return;
+    }
+
+    try {
+        const response = await fetch(`http://localhost:8081/task/${selectedTask.taskId}/update`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Ошибка при обновлении профиля');
+      }
+
+      const updatedTask = await response.json();
+      const updatedTaskData = {
+        ...selectedTask,
+        taskDTO: updatedTask,
+      };
+      setTaskData(updatedTaskData);
+      localStorage.setItem('taskData', JSON.stringify(updatedTaskData));
+
+    } catch (error) {
+      console.error('Ошибка:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (selectedTask) {
+      setFormData(selectedTask);
+    }
+  }, [selectedTask]);
+
+  useEffect(() => {
+      fetchWithAuth("http://localhost:8081/task/recent")
+          .then(response => {
+              if (!response.ok) throw new Error("Ошибка при получении задач");
+              return response.json();
+          })
+          .then(data => setTasks(data))
+          .catch(error => setError(error.message))
+          .finally(() => setLoading(false)); // <-- завершили загрузку
+  }, []);
 
   useEffect(() => {
     const fetchProjectsAndUsers = async () => {
@@ -325,13 +386,65 @@ const TaskPage = () => {
         <div className="content-area">
           {selectedTask ? (
             <div className="task-details">
-              <h2>{selectedTask.taskName}</h2>
-              <p><strong>Описание:</strong> {selectedTask.description}</p>
+              <h2>
+                {isEditing ? (
+                  <textarea
+                    name="taskName"
+                    value={formData.taskName || ''}
+                    onChange={handleInputChange}
+                  />
+                ) : selectedTask.taskName}
+              </h2>
+
+              <p><strong>Описание:</strong>
+                {isEditing ? (
+                  <textarea
+                    name="description"
+                    value={formData.description || ''}
+                    onChange={handleInputChange}
+                  />
+                ) : selectedTask.description}
+              </p>
+
               <p><strong>Дата начала:</strong> {formatDate(selectedTask.startDate)}</p>
               <p><strong>Дата окончания:</strong> {formatDate(selectedTask.endDate)}</p>
-              <p><strong>Категория:</strong> {selectedTask.category}</p>
-              <p><strong>Приоритет:</strong> {selectedTask.priority}</p>
-              <p><strong>Проект:</strong> {selectedTask.project?.projectName || 'Не указано'}</p>
+
+              <p><strong>Категория:</strong>
+                {isEditing ? (
+                  <input
+                    name="category"
+                    value={formData.category || ''}
+                    onChange={handleInputChange}
+                  />
+                ) : selectedTask.category}
+              </p>
+
+              <p><strong>Приоритет:</strong>
+                {isEditing ? (
+                  <select
+                    name="priority"
+                    value={formData.priority}
+                    onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
+                  >
+                    {priorities.map((p) => (
+                      <option key={p} value={p}>
+                        {p}
+                      </option>
+                    ))}
+                  </select>
+                ) : selectedTask.priority}
+{/*              : ( */}
+             {/*      <span>{formData.priority}</span> */}
+{/*                 )} */}
+              </p>
+
+              <p><strong>Проект:</strong>
+                {selectedTask.projectName || 'Не указано'}
+              </p>
+
+              <button className="edit-button" onClick={handleEditToggle}>
+                {isEditing ? 'Сохранить изменения' : 'Редактировать'}
+              </button>
             </div>
           ) : (
             <div className="default-hint">

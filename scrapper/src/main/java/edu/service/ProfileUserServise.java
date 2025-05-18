@@ -58,7 +58,6 @@ public class ProfileUserServise {
             User user = optionalUser.get();
 
             user.setUserName(userDTO.getUserName());
-            user.setEmail(userDTO.getEmail());
             user.setSocialLinks(userDTO.getSocialLinks());
             user.setPhoneNumber(userDTO.getPhoneNumber());
             user.setLocation(userDTO.getLocation());

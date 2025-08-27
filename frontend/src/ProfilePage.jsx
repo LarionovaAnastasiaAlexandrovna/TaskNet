@@ -210,7 +210,7 @@ const ProfilePage = () => {
 
               <div className="profile-photo">
                 <strong>Фото профиля:</strong>
-                <img src={profileImageSrc} alt="Profile" className="profile-image" />
+                <img src="/foto_profile.jpeg" alt="Profile" className="profile-image" />
               </div>
             </div>
 

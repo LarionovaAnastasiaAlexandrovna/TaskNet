@@ -33,21 +33,21 @@ public class User {
     @Column(name = "userid", nullable = false)
     Long userId;
 
-    @Column(name = "username", nullable = false, length = 255)
+    @Column(name = "username", nullable = false)
     String userName;
 
     @Email
-    @Column(name = "email", nullable = false, unique = true, length = 255)
+    @Column(name = "email", nullable = false, unique = true)
     String email;
 
-    @Column(name = "password_hash", nullable = false, length = 255)
+    @Column(name = "password_hash", nullable = false)
     String passwordHash;
 
     @Enumerated(value = EnumType.STRING)
     @Column(name = "role", nullable = false, length = 50)
     UserRole role;
 
-    @Column(name = "sociallinks"/*, columnDefinition = "jsonb"*/)
+    @Column(name = "sociallinks")
     String socialLinks;
 
     @Column(name = "birthdate")
@@ -61,11 +61,14 @@ public class User {
     @Column(name = "phonenumber", length = 15)
     String phoneNumber;
 
-    @Column(name = "location", length = 255)
+    @Column(name = "location")
     String location;
 
     @Column(name = "profiledescription", columnDefinition = "TEXT")
     String profileDescription;
+
+    @Column(name = "enabled")
+    private boolean enabled;
 }
 
 

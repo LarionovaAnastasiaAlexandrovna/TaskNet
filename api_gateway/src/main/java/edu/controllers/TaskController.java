@@ -28,9 +28,9 @@ import java.util.List;
 public class TaskController {
 
     private final RestTemplate restTemplate = new RestTemplate();
+    private final String INNER_URL = "http://localhost:8082/innerprosses/";
 
-    @Autowired
-    private JwtUtil jwtUtil;
+    @Autowired private JwtUtil jwtUtil;
 
     @CrossOrigin(origins = "http://localhost:5173")
     @PostMapping("/create")
@@ -38,11 +38,11 @@ public class TaskController {
             /*@Valid*/ @RequestBody TaskDTO request) {
         try {
             System.out.println("Запрос прилетает на создание задачи");
-            String scrapperUrl = "http://localhost:8082/innerprosses/task/create";  // Адрес Scrapper-сервиса
+            String scrapperUrl = INNER_URL + "task/create";  // Адрес Scrapper-сервиса
 
             String token = authHeader.startsWith("Bearer ") ? authHeader.substring(7) : authHeader;
 
-            if (!jwtUtil.validateToken(token)) {
+            if (jwtUtil.isInvalidToken(token)) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Недействительный токен");
             }
 
@@ -76,12 +76,12 @@ public class TaskController {
     public ResponseEntity<?> getRecentTasks(@RequestHeader("Authorization") String authHeader) {
         System.out.println("Запрос прилетает: получение недавних задач");
 
-        String scrapperUrl = "http://localhost:8082/innerprosses/task/recent";
+        String scrapperUrl = INNER_URL + "task/recent";
 
         try {
             String token = authHeader.startsWith("Bearer ") ? authHeader.substring(7) : authHeader;
 
-            if (!jwtUtil.validateToken(token)) {
+            if (jwtUtil.isInvalidToken(token)) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Недействительный токен");
             }
 
@@ -96,7 +96,7 @@ public class TaskController {
                     scrapperUrl,
                     HttpMethod.GET,
                     new HttpEntity<>(headers),
-                    new ParameterizedTypeReference<List<TaskDTO>>() {}
+                    new ParameterizedTypeReference<>() {}
             );
 
             System.out.println("Запрос на получение недавних задач отправлен");
@@ -115,12 +115,12 @@ public class TaskController {
                                             @RequestHeader("Authorization") String authHeader) {
 
         System.out.println("Запрос прилетает: обновление последнего просмотра задачи");
-        String scrapperUrl = "http://localhost:8082/innerprosses/task/" + id + "/view";
+        String scrapperUrl = INNER_URL + "task/" + id + "/view";
 
         try {
             String token = authHeader.startsWith("Bearer ") ? authHeader.substring(7) : authHeader;
 
-            if (!jwtUtil.validateToken(token)) {
+            if (jwtUtil.isInvalidToken(token)) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Недействительный токен");
             }
 
@@ -157,12 +157,12 @@ public class TaskController {
                                         @RequestBody TaskDTO taskDTO) {
         System.out.println("Запрос прилетает: обновление задачи");
 
-        String scrapperUrl = "http://localhost:8082/innerprosses/task/" + id + "/update";
+        String scrapperUrl = INNER_URL + "task/" + id + "/update";
 
         try {
             String token = authHeader.startsWith("Bearer ") ? authHeader.substring(7) : authHeader;
 
-            if (!jwtUtil.validateToken(token)) {
+            if (jwtUtil.isInvalidToken(token)) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Недействительный токен");
             }
 

@@ -10,26 +10,40 @@ import java.util.Date;
 
 @Component
 public class JwtUtil {
-    private final String SECRET = "your_super_secret_key_which_should_be_long_enough"; // Минимум 256 бит для HS256
-    private final long EXPIRATION_TIME = 20 * 60 * 1000; // 20 минут
 
     // Генерация ключа
     private SecretKey getSigningKey() {
+        // Минимум 256 бит для HS256
+        String SECRET = "your_super_secret_key_which_should_be_long_enough";
         return Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8));
     }
 
+
     // Генерация токена
-    public String generateToken(String email) {
+    public String generateTokenSession(String email) {
+        // 20 минут
+        long EXPIRATION_TIME_SESSION = 20 * 60 * 1000;
         return Jwts.builder()
                 .setSubject(email)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME_SESSION))
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    public String generateTokenVerify(String email) {
+        // 24 часа
+        long EXPIRATION_TIME_VERIFY = 24 * 60 * 60 * 1000;
+        return Jwts.builder()
+                .setSubject(email)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME_VERIFY))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
     // Проверка токена
-    public boolean validateToken(String token) {
+    public boolean isInvalidToken(String token) {
         try {
             Jwts.parserBuilder()
                     .setSigningKey(getSigningKey())

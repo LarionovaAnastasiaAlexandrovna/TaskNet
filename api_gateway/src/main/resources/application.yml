@@ -25,3 +25,18 @@ spring:
   thymeleaf:
     prefix: classpath:/templates/
     suffix: .html
+
+  mail:
+    host: smtp.mail.ru
+    port: 465
+    username: lnastya.l@mail.ru
+    password: j2eXBzUnkvTPl5WcbRvh
+    properties:
+      mail:
+        smtp:
+          auth: true
+          ssl:
+            enable: true
+app:
+  verification:
+    url: http://localhost:8081/auth/verify?token=

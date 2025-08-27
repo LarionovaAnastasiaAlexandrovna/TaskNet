@@ -38,11 +38,23 @@ public class AuthUserServise {
         System.out.println("Пытаемся найти пользователя по email");
         User user = repository.findByEmail(loginRequestDTO.getEmail())
                 .orElseThrow(() -> new UserException(UserException.Type.USER_NOT_FOUND, "Пользователь не найден"));
+        if (!user.isEnabled()) {
+            throw new UserException(UserException.Type.USER_NOT_FOUND, "Пользователь не подтвердил почту");
+        }
         System.out.println("Пытаемся проверить пароль");
         if(!Objects.equals(loginRequestDTO.getPassword(), user.getPasswordHash())) {
             throw new UserException(UserException.Type.INVALID_PASSWORD, "Неверный пароль");
         }
         System.out.println("Авторизация успешна!");
         return user;
+    }
+
+    public boolean verify(String email) {
+        System.out.println("Пытаемся найти пользователя по email");
+        User user = repository.findByEmail(email)
+                .orElseThrow(() -> new UserException(UserException.Type.USER_NOT_FOUND, "Пользователь не найден"));
+        user.setEnabled(true);
+        repository.save(user);
+        return true;
     }
 }

@@ -1,6 +1,5 @@
 package edu.util;
 
-import dto.LoginRequestDTO;
 import dto.RegisterRequestDTO;
 import dto.UserInProjectDTO;
 import edu.entity.User;
@@ -15,16 +14,17 @@ public class ConverterUserRequestDTO {
         user.setPasswordHash(passwordHash);
         user.setProfilePhoto(null);
         user.setRole(UserRole.USER);
+        user.setEnabled(false);
         return user;
     }
 
-    public User convert(LoginRequestDTO loginRequestDTO) {
-        User user = new User();
-        user.setEmail(loginRequestDTO.getEmail());
-        String passwordHash = loginRequestDTO.getPassword(); // TODO написать шифровальщик, а потом хеширование
-        user.setPasswordHash(passwordHash);
-        return user;
-    }
+//    public User convert(LoginRequestDTO loginRequestDTO) {
+//        User user = new User();
+//        user.setEmail(loginRequestDTO.getEmail());
+//        String passwordHash = loginRequestDTO.getPassword(); // TODO написать шифровальщик, а потом хеширование
+//        user.setPasswordHash(passwordHash);
+//        return user;
+//    }
 
     public UserInProjectDTO convertUserInProject(User user) {
         UserInProjectDTO userDTO = new UserInProjectDTO();

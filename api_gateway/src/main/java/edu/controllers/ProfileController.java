@@ -24,21 +24,21 @@ import org.springframework.web.client.RestTemplate;
 public class ProfileController {
 
     private final RestTemplate restTemplate = new RestTemplate();
+    private final String INNER_URL = "http://localhost:8082/innerprosses/";
 
-    @Autowired
-    private JwtUtil jwtUtil;
+    @Autowired private JwtUtil jwtUtil;
 
     @GetMapping
     @CrossOrigin(origins = "http://localhost:5173")
     public ResponseEntity<?> getUserProfile(@RequestHeader("Authorization") String authHeader) {
         System.out.println("Запрос прилетает: отображение профиля");
 
-        String scrapperUrl = "http://localhost:8082/innerprosses/profile";
+        String scrapperUrl = INNER_URL + "profile";
 
         try {
             String token = authHeader.startsWith("Bearer ") ? authHeader.substring(7) : authHeader;
 
-            if (!jwtUtil.validateToken(token)) {
+            if (jwtUtil.isInvalidToken(token)) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Недействительный токен");
             }
 
@@ -72,12 +72,12 @@ public class ProfileController {
                                                @RequestBody UserDTO userDTO) {
         System.out.println("Запрос прилетает: обновление профиля");
 
-        String scrapperUrl = "http://localhost:8082/innerprosses/profile/update";
+        String scrapperUrl = INNER_URL + "profile/update";
 
         try {
             String token = authHeader.startsWith("Bearer ") ? authHeader.substring(7) : authHeader;
 
-            if (!jwtUtil.validateToken(token)) {
+            if (jwtUtil.isInvalidToken(token)) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Недействительный токен");
             }
 

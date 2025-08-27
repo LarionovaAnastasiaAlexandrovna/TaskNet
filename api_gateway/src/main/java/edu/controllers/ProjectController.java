@@ -30,9 +30,9 @@ import java.util.Map;
 public class ProjectController {
 
     private final RestTemplate restTemplate = new RestTemplate();
+    private final String INNER_URL = "http://localhost:8082/innerprosses/";
 
-    @Autowired
-    private JwtUtil jwtUtil;
+    @Autowired private JwtUtil jwtUtil;
 
     @CrossOrigin(origins = "http://localhost:5173")
     @PostMapping("/create")
@@ -40,11 +40,11 @@ public class ProjectController {
                                 /*@Valid*/ @RequestBody ProjectDTO request) {
         try {
             System.out.println("Запрос прилетает на создание проекта");
-            String scrapperUrl = "http://localhost:8082/innerprosses/project/create";  // Адрес Scrapper-сервиса
+            String scrapperUrl = INNER_URL + "project/create";  // Адрес Scrapper-сервиса
 
             String token = authHeader.startsWith("Bearer ") ? authHeader.substring(7) : authHeader;
 
-            if (!jwtUtil.validateToken(token)) {
+            if (jwtUtil.isInvalidToken(token)) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Недействительный токен");
             }
 
@@ -77,12 +77,12 @@ public class ProjectController {
     @GetMapping("/all")
     public ResponseEntity<?> getAllProject(@RequestHeader("Authorization") String authHeader) {
 
-        String scrapperUrl = "http://localhost:8082/innerprosses/project/all";  // Адрес Scrapper-сервиса
+        String scrapperUrl = INNER_URL + "project/all";  // Адрес Scrapper-сервиса
 
         try {
         String token = authHeader.startsWith("Bearer ") ? authHeader.substring(7) : authHeader;
 
-        if (!jwtUtil.validateToken(token)) {
+        if (jwtUtil.isInvalidToken(token)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Недействительный токен");
         }
 
@@ -97,7 +97,7 @@ public class ProjectController {
                     scrapperUrl,
                     HttpMethod.GET,
                     new HttpEntity<>(headers),
-                    new ParameterizedTypeReference<List<ProjectDTO>>() {}
+                    new ParameterizedTypeReference<>() {}
             );
 
 
@@ -117,12 +117,12 @@ public class ProjectController {
                                                 @RequestHeader("Authorization") String authHeader) {
         System.out.println("Запрос прилетает: получение данных о связанных пользователях");
 
-        String scrapperUrl = "http://localhost:8082/innerprosses/project/" + id + "/all-users";
+        String scrapperUrl = INNER_URL + "project/" + id + "/all-users";
 
         try {
             String token = authHeader.startsWith("Bearer ") ? authHeader.substring(7) : authHeader;
 
-            if (!jwtUtil.validateToken(token)) {
+            if (jwtUtil.isInvalidToken(token)) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Недействительный токен");
             }
 
@@ -130,7 +130,7 @@ public class ProjectController {
                     scrapperUrl,
                     HttpMethod.GET,
                     new HttpEntity<>(id),
-                    new ParameterizedTypeReference<List<UserInProjectDTO>>() {}
+                    new ParameterizedTypeReference<>() {}
             );
 
             System.out.println("Запрос на получение данных о связанных пользователях отправлен");
@@ -148,7 +148,7 @@ public class ProjectController {
     public ResponseEntity<?> addUserInProject(@PathVariable Long id,
                                               @RequestBody Map<String, String> requestBody,
                                               @RequestHeader("Authorization") String authHeader) {
-        String scrapperUrl = "http://localhost:8082/innerprosses/project/" + id + "/add-user";
+        String scrapperUrl = INNER_URL + "project/" + id + "/add-user";
         String email = requestBody.get("email");
 
         System.out.println("Добавление пользователя с email: " + email + " в проект ID: " + id);
@@ -156,7 +156,7 @@ public class ProjectController {
         try {
             String token = authHeader.startsWith("Bearer ") ? authHeader.substring(7) : authHeader;
 
-            if (!jwtUtil.validateToken(token)) {
+            if (jwtUtil.isInvalidToken(token)) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Недействительный токен");
             }
 

@@ -1,13 +1,18 @@
 package edu.service;
 
+import dto.CommentDTO;
 import dto.GeneraleResponseDTO;
 import dto.TaskDTO;
+import edu.entity.Comment;
 import edu.entity.Task;
 import edu.entity.User;
+import edu.repository.CommentsRepository;
 import edu.repository.ProjectsRepository;
 import edu.repository.TasksRepository;
 import edu.repository.UsersRepository;
+import edu.util.ConverterCommentDTO;
 import edu.util.ConverterTaskDTO;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -15,15 +20,18 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+@AllArgsConstructor
 @Service
 public class TaskService {
-    @Autowired
-    private TasksRepository tasksRepository;
+    private final TasksRepository tasksRepository;
 
-    @Autowired
-    private UsersRepository usersRepository;
+    private final UsersRepository usersRepository;
+
+    private final CommentsRepository commentsRepository;
 
     private final ConverterTaskDTO converter = new ConverterTaskDTO();
+
+    private final ConverterCommentDTO converterCommentDTO = new ConverterCommentDTO();
 
     public TaskDTO saveNew(TaskDTO taskDTO, String email) {
 
@@ -35,6 +43,21 @@ public class TaskService {
         task = tasksRepository.save(task);
 
         return converter.convertTask(task);
+    }
+
+    public CommentDTO saveNew(CommentDTO commentDTO, String email) {
+
+        Optional<User> optionalUser = usersRepository.findByEmail(email);
+        User user = optionalUser.get();
+
+        Optional<Task> optionalTask = tasksRepository.findById(commentDTO.getTaskId());
+        Task task = optionalTask.get();
+
+        Comment comment = converterCommentDTO.convertCommentDTO(commentDTO, user, task);
+
+        comment = commentsRepository.save(comment);
+
+        return converterCommentDTO.convertComment(comment);
     }
 
     public List<TaskDTO> getTasksByEmail(String email) {

@@ -3,16 +3,13 @@ package dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import enums.TaskPriority;
 import enums.TaskStatus;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.experimental.FieldDefaults;
 
 @Data
 @Getter
@@ -20,39 +17,40 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class TaskDTO {
 
-    private Long taskId;
+    Long taskId;
 
-    private String taskName;
+    String taskName;
 
-    private String description;
+    String description;
 
-    private TaskStatus status;
+    TaskStatus status;
 
-    private TaskPriority priority;
+    TaskPriority priority;
 
-    private Long projectId;
+    Long projectId;
 
-    private String projectName;
+    String projectName;
 
-    private Long assignedTo;
+    Long assignedTo;
 
-    private String email;
-
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDate startDate;
+    String email;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDate endDate;
+    LocalDate startDate;
 
-    private String category;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    LocalDate endDate;
+
+    String category;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private LocalDateTime dateCreate;
+    LocalDateTime dateCreate;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private LocalDateTime dateLastView;
+    LocalDateTime dateLastView;
 
 //    private String dependencies;
 }

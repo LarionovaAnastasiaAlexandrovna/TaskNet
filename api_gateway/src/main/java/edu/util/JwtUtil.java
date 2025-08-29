@@ -11,7 +11,7 @@ import java.util.Date;
 @Component
 public class JwtUtil {
     private final String SECRET = "your_super_secret_key_which_should_be_long_enough"; // Минимум 256 бит для HS256
-    private final long EXPIRATION_TIME = 20 * 60 * 1000; // 20 минут
+    private final long EXPIRATION_TIME = 60 * 60 * 1000; // 60 минут
 
     // Генерация ключа
     private SecretKey getSigningKey() {

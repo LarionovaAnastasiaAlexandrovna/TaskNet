@@ -3,16 +3,22 @@ package dto;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDateTime;
+
 @Data
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserInProjectDTO {
-    Long userId;
+public class CommentDTO {
+    Long commentId;
 
-    String userName;
+    String content;
 
-    String email;
+    Long authorId;
+
+    Long taskId;
+
+    LocalDateTime date = LocalDateTime.now();
 }

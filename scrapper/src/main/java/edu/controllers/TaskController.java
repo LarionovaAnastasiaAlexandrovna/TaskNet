@@ -1,5 +1,6 @@
 package edu.controllers;
 
+import dto.CommentDTO;
 import dto.GeneraleResponseDTO;
 import dto.TaskDTO;
 import edu.service.TaskService;
@@ -70,5 +71,13 @@ public class TaskController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Ошибка Scrapper-сервиса: " + e.getMessage());
         }
+    }
+
+    @PostMapping("/{id}/add-comment")
+    public ResponseEntity<?> addComment(@RequestHeader("X-User-Email") String email,
+                                        @Valid @RequestBody CommentDTO commentDTO) {
+        System.out.println("Запрос на создание нового комментария пришел в scrapper");
+        CommentDTO saveCommentDTO = taskService.saveNew(commentDTO, email);
+        return ResponseEntity.status(HttpStatus.CREATED).body(saveCommentDTO);
     }
 }

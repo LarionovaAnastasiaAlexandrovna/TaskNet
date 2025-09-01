@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import { fetchWithAuth } from "./utils/auth";
-import { useParams } from 'react-router-dom';
+// import { useParams } from 'react-router-dom';
 import './TaskPage.css';
 import './common.css';
 
@@ -12,8 +12,6 @@ const TaskPage = () => {
 
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
-  const [currentUserId, setCurrentUserId] = useState('');
-
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -57,6 +55,8 @@ const TaskPage = () => {
 
   const [projects, setProjects] = useState([]);
 
+  const [, setTaskData] = useState(null);
+
   const navigateToProfilePage = () => {
     navigate("/profile");
   };
@@ -93,8 +93,26 @@ const TaskPage = () => {
       });
   };
 
-  const handleTaskClick = async (task) => {
-    setSelectedTask(task);
+    const formatDateTime = (dateString) => {
+        if (!dateString) return "";
+
+        // добавляем Z, если его нет
+        const safeDateString = dateString.endsWith("Z") ? dateString : dateString + "Z";
+
+        const date = new Date(safeDateString);
+
+        return date.toLocaleString("ru-RU", {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit"
+        });
+    };
+
+    const handleTaskClick = async (task) => {
+   setSelectedTask({ ...task, comments: [] }); // сразу сбросить старые
+   fetchComments(task.taskId);
     console.log('Выбранная задача:', task);
     navigate(`/task/${task.taskId}`);
 
@@ -108,15 +126,15 @@ const TaskPage = () => {
     }
   };
 
-  const handleEditToggle = () => {
-    if (isEditing) {
-      handleSaveTaskChanges();
-    } else {
-      setFormData(selectedTask);
-      setIsEditing(true);
-    }
-    setIsEditing(!isEditing);
-  };
+    const handleEditToggle = () => {
+        if (isEditing) {
+            handleSaveTaskChanges();
+            setIsEditing(false);
+        } else {
+            setFormData(selectedTask);
+            setIsEditing(true);
+        }
+    };
 
   const handleFormChange = (e) => {
     const { name, value } = e.target;
@@ -270,7 +288,66 @@ const TaskPage = () => {
     }
   };
 
-  return (
+  const [newCommentText, setNewCommentText] = useState('');
+
+    const handleAddComment = async () => {
+        if (!newCommentText.trim()) return;
+
+        try {
+            const response = await fetch(`http://localhost:8081/task/${selectedTask.taskId}/add-comment`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify({ content: newCommentText }),
+            });
+
+            if (!response.ok) throw new Error('Ошибка при добавлении комментария');
+
+            const addedComment = await response.json();
+
+            // Вместо ручного добавления в массив:
+            await fetchComments(selectedTask.taskId);
+
+            setSelectedTask(prev => ({
+                ...prev,
+                comments: [...(prev.comments || []), addedComment],
+            }));
+
+            // setNewCommentText('');
+        } catch (err) {
+            console.error(err);
+            alert('Не удалось добавить комментарий');
+        }
+    };
+
+    const fetchComments = async (taskId) => {
+        try {
+            const response = await fetch(`http://localhost:8081/task/${taskId}/comments`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            if (!response.ok) throw new Error("Ошибка при загрузке комментариев");
+            const data = await response.json();
+
+            setSelectedTask(prev => ({
+                ...prev,
+                comments: data
+            }));
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    // const handleTaskClick = (task) => {
+    //     setSelectedTask({ ...task, comments: [] }); // сразу сбросить старые
+    //     fetchComments(task.taskId);
+    // };
+
+
+    return (
     <div className="base-page">
       <div className="navbar">
         <div className="logo" onClick={handleLogoClick}></div>
@@ -407,95 +484,127 @@ const TaskPage = () => {
           )}
         </div>
 
-        <div className="content-area">
-          {selectedTask ? (
-            <div className="task-details">
-              <h2>
-                {isEditing ? (
-                  <textarea
-                    name="taskName"
-                    value={formData.taskName || ''}
-                    onChange={handleInputChange}
-                  />
-                ) : selectedTask.taskName}
-              </h2>
+          <div className="content-area">
+              {selectedTask ? (
+                  <>
+                      <div className="task-details">
+                          <h2>
+                              {isEditing ? (
+                                  <textarea
+                                      name="taskName"
+                                      value={formData.taskName || ''}
+                                      onChange={handleInputChange}
+                                  />
+                              ) : (
+                                  selectedTask.taskName
+                              )}
+                          </h2>
 
-              <p><strong>Описание:</strong>
-                {isEditing ? (
-                  <textarea
-                    name="description"
-                    value={formData.description || ''}
-                    onChange={handleInputChange}
-                  />
-                ) : selectedTask.description}
-              </p>
+                          <p><strong>Описание:</strong>
+                              {isEditing ? (
+                                  <textarea
+                                      name="description"
+                                      value={formData.description || ''}
+                                      onChange={handleInputChange}
+                                  />
+                              ) : (
+                                  selectedTask.description
+                              )}
+                          </p>
 
-              <p><strong>Назначено на:</strong>
-               {isEditing ? (
-                 <div className="form-group">
-                   <select
-                     name="assignedTo"
-                     value={formData.assignedTo || ''}
-                     onChange={handleFormChange}
-                   >
-                     <option value="">-- Выберите исполнителя --</option>
-                     {projectMembers.map(member => (
-                       <option key={member.userId} value={member.userId}>
-                         {member.email}
-                       </option>
-                     ))}
-                   </select>
-                 </div>
-               ) : (
-                 selectedTask.email
-               )}
-              </p>
-              <p><strong>Дата начала:</strong> {formatDate(selectedTask.startDate)}</p>
-              <p><strong>Дата окончания:</strong> {formatDate(selectedTask.endDate)}</p>
+                          <p><strong>Назначено на:</strong>
+                              {isEditing ? (
+                                  <div className="form-group">
+                                      <select
+                                          name="assignedTo"
+                                          value={formData.assignedTo || ''}
+                                          onChange={handleFormChange}
+                                      >
+                                          <option value="">-- Выберите исполнителя --</option>
+                                          {projectMembers.map(member => (
+                                              <option key={member.userId} value={member.userId}>
+                                                  {member.email}
+                                              </option>
+                                          ))}
+                                      </select>
+                                  </div>
+                              ) : (
+                                  selectedTask.email
+                              )}
+                          </p>
 
-              <p><strong>Категория:</strong>
-                {isEditing ? (
-                  <input
-                    name="category"
-                    value={formData.category || ''}
-                    onChange={handleInputChange}
-                  />
-                ) : selectedTask.category}
-              </p>
+                          <p><strong>Дата начала:</strong> {formatDate(selectedTask.startDate)}</p>
+                          <p><strong>Дата окончания:</strong> {formatDate(selectedTask.endDate)}</p>
 
-              <p><strong>Приоритет:</strong>
-                {isEditing ? (
-                  <select
-                    name="priority"
-                    value={formData.priority}
-                    onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
-                  >
-                    {priorities.map((p) => (
-                      <option key={p} value={p}>
-                        {p}
-                      </option>
-                    ))}
-                  </select>
-                ) : selectedTask.priority}
-{/*              : ( */}
-             {/*      <span>{formData.priority}</span> */}
-{/*                 )} */}
-              </p>
+                          <p><strong>Категория:</strong>
+                              {isEditing ? (
+                                  <input
+                                      name="category"
+                                      value={formData.category || ''}
+                                      onChange={handleInputChange}
+                                  />
+                              ) : selectedTask.category}
+                          </p>
 
-              <p><strong>Проект:</strong>
-                {selectedTask.projectName || 'Не указано'}
-              </p>
+                          <p><strong>Приоритет:</strong>
+                              {isEditing ? (
+                                  <select
+                                      name="priority"
+                                      value={formData.priority}
+                                      onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
+                                  >
+                                      {priorities.map((p) => (
+                                          <option key={p} value={p}>{p}</option>
+                                      ))}
+                                  </select>
+                              ) : (
+                                  selectedTask.priority
+                              )}
+                          </p>
 
-              <button className="edit-button" onClick={handleEditToggle}>
-                {isEditing ? 'Сохранить изменения' : 'Редактировать'}
-              </button>
-            </div>
-          ) : (
-            <div className="default-hint">
-              Для более подробного просмотра задачи нажмите на неё
-            </div>
-          )}
-        </div>
+                          <p><strong>Проект:</strong> {selectedTask.projectName || 'Не указано'}</p>
+
+                          <button className="edit-button" onClick={handleEditToggle}>
+                              {isEditing ? 'Сохранить изменения' : 'Редактировать'}
+                          </button>
+                      </div>
+
+                      {/* Блок комментариев */}
+                      <div className="comments-section">
+                          <h3>Комментарии</h3>
+
+                          <div className="comments-list">
+                              {(selectedTask.comments || []).length > 0 ? (
+                                  selectedTask.comments.map(comment => (
+                                      <div key={comment.commentId} className="comment-item">
+                                          <div className="comment-header">
+                                              <span className="comment-author">{comment.authorName}</span>
+                                              <span className="comment-date">{formatDateTime(comment.date)}</span>
+                                          </div>
+                                          <div className="comment-body">{comment.content}</div>
+                                      </div>
+                                  ))
+                              ) : (
+                                  <p>Пока нет комментариев</p>
+                              )}
+                          </div>
+
+                          <div className="new-comment">
+          <textarea
+              placeholder="Добавьте комментарий..."
+              value={newCommentText}
+              onChange={(e) => setNewCommentText(e.target.value)}
+          />
+                              <button className="edit-button" onClick={handleAddComment}>Добавить комментарий</button>
+                          </div>
+                      </div>
+                  </>
+              ) : (
+                  <div className="default-hint">
+                      Для более подробного просмотра задачи нажмите на неё
+                  </div>
+              )}
+          </div>
       </div>
     </div>
   );

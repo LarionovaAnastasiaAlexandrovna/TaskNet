@@ -18,7 +18,6 @@ public class JwtUtil {
         return Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8));
     }
 
-
     // Генерация токена
     public String generateTokenSession(String email) {
         // 20 минут

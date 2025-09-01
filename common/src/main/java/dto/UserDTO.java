@@ -1,11 +1,8 @@
 package dto;
 
 import enums.UserRole;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
 
@@ -14,22 +11,23 @@ import java.time.LocalDate;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserDTO {
-    private String userName;
+    String userName;
 
-    private String email;
+    String email;
 
-    private UserRole role;
+    UserRole role;
 
-    private String socialLinks;
+    String socialLinks;
 
-    private LocalDate birthDate;
+    LocalDate birthDate;
 
-    private byte[] profilePhoto;
+    byte[] profilePhoto;
 
-    private String phoneNumber;
+    String phoneNumber;
 
-    private String location;
+    String location;
 
-    private String profileDescription;
+    String profileDescription;
 }

@@ -2,11 +2,8 @@ package dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import enums.ProjectStatus;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
 
@@ -15,22 +12,23 @@ import java.time.LocalDate;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class ProjectDTO {
     @JsonProperty("projectId")
-    private Long projectId;
+    Long projectId;
 
     @JsonProperty("projectName")
-    private String projectName;
+    String projectName;
 
     @JsonProperty("description")
-    private String description;
+    String description;
 
     @JsonProperty("startDate")
-    private LocalDate startDate;
+    LocalDate startDate;
 
     @JsonProperty("endDate")
-    private LocalDate endDate;
+    LocalDate endDate;
 
     @JsonProperty("status")
-    private ProjectStatus projectStatus;
+    ProjectStatus projectStatus;
 }

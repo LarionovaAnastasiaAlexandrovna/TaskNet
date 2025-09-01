@@ -1,5 +1,6 @@
 package edu.controllers;
 
+import dto.CommentDTO;
 import dto.GeneraleResponseDTO;
 import dto.TaskDTO;
 import edu.service.TaskService;
@@ -67,6 +68,28 @@ public class TaskController {
             GeneraleResponseDTO responseDTO = taskService.updateTask(taskDTO);
             return ResponseEntity.ok(responseDTO);
         } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Ошибка Scrapper-сервиса: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/{id}/add-comment")
+    public ResponseEntity<?> addComment(@RequestHeader("X-User-Email") String email,
+                                        @Valid @RequestBody CommentDTO commentDTO) {
+        System.out.println("Запрос на создание нового комментария пришел в scrapper");
+        CommentDTO saveCommentDTO = taskService.saveNew(commentDTO, email);
+        return ResponseEntity.status(HttpStatus.CREATED).body(saveCommentDTO);
+    }
+
+    //        String scrapperUrl = "http://localhost:8082/innerprosses/task/" + id + "/comments";
+    @GetMapping("/{id}/comments")
+    public ResponseEntity<?> getCommentsByTask(@PathVariable Long id) {
+        System.out.println("Запрос на получение комментариев по задаче №" + id + " пришел в scrapper");
+        try {
+            List<CommentDTO> commentDTOS = taskService.getAllCommentsByTackId(id);
+            return ResponseEntity.ok(commentDTOS);
+        } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Ошибка Scrapper-сервиса: " + e.getMessage());
         }

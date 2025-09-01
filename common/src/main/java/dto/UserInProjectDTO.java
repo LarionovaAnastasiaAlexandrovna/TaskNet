@@ -1,20 +1,18 @@
 package dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Data
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserInProjectDTO {
-    private Long userId;
+    Long userId;
 
-    private String userName;
+    String userName;
 
-    private String email;
+    String email;
 }

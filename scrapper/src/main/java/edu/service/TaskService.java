@@ -7,13 +7,11 @@ import edu.entity.Comment;
 import edu.entity.Task;
 import edu.entity.User;
 import edu.repository.CommentsRepository;
-import edu.repository.ProjectsRepository;
 import edu.repository.TasksRepository;
 import edu.repository.UsersRepository;
 import edu.util.ConverterCommentDTO;
 import edu.util.ConverterTaskDTO;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -98,5 +96,9 @@ public class TaskService {
                     null
             );
         }
+    }
+
+    public List<CommentDTO> getAllCommentsByTackId(Long id) {
+        return converterCommentDTO.convertComments(commentsRepository.getCommentsByTaskTaskId(id));
     }
 }

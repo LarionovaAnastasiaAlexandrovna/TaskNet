@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import { fetchWithAuth } from "./utils/auth";
-import { useParams } from 'react-router-dom';
+// import { useParams } from 'react-router-dom';
 import './TaskPage.css';
 import './common.css';
 
@@ -12,8 +12,6 @@ const TaskPage = () => {
 
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
-  const [currentUserId, setCurrentUserId] = useState('');
-
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -57,6 +55,8 @@ const TaskPage = () => {
 
   const [projects, setProjects] = useState([]);
 
+  const [, setTaskData] = useState(null);
+
   const navigateToProfilePage = () => {
     navigate("/profile");
   };
@@ -93,8 +93,26 @@ const TaskPage = () => {
       });
   };
 
-  const handleTaskClick = async (task) => {
-    setSelectedTask(task);
+    const formatDateTime = (dateString) => {
+        if (!dateString) return "";
+
+        // добавляем Z, если его нет
+        const safeDateString = dateString.endsWith("Z") ? dateString : dateString + "Z";
+
+        const date = new Date(safeDateString);
+
+        return date.toLocaleString("ru-RU", {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit"
+        });
+    };
+
+    const handleTaskClick = async (task) => {
+   setSelectedTask({ ...task, comments: [] }); // сразу сбросить старые
+   fetchComments(task.taskId);
     console.log('Выбранная задача:', task);
     navigate(`/task/${task.taskId}`);
 
@@ -108,15 +126,15 @@ const TaskPage = () => {
     }
   };
 
-  const handleEditToggle = () => {
-    if (isEditing) {
-      handleSaveTaskChanges();
-    } else {
-      setFormData(selectedTask);
-      setIsEditing(true);
-    }
-    setIsEditing(!isEditing);
-  };
+    const handleEditToggle = () => {
+        if (isEditing) {
+            handleSaveTaskChanges();
+            setIsEditing(false);
+        } else {
+            setFormData(selectedTask);
+            setIsEditing(true);
+        }
+    };
 
   const handleFormChange = (e) => {
     const { name, value } = e.target;
@@ -270,7 +288,7 @@ const TaskPage = () => {
     }
   };
 
-    const [newCommentText, setNewCommentText] = useState('');
+  const [newCommentText, setNewCommentText] = useState('');
 
     const handleAddComment = async () => {
         if (!newCommentText.trim()) return;
@@ -289,17 +307,45 @@ const TaskPage = () => {
 
             const addedComment = await response.json();
 
+            // Вместо ручного добавления в массив:
+            await fetchComments(selectedTask.taskId);
+
             setSelectedTask(prev => ({
                 ...prev,
                 comments: [...(prev.comments || []), addedComment],
             }));
 
-            setNewCommentText('');
+            // setNewCommentText('');
         } catch (err) {
             console.error(err);
             alert('Не удалось добавить комментарий');
         }
     };
+
+    const fetchComments = async (taskId) => {
+        try {
+            const response = await fetch(`http://localhost:8081/task/${taskId}/comments`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            if (!response.ok) throw new Error("Ошибка при загрузке комментариев");
+            const data = await response.json();
+
+            setSelectedTask(prev => ({
+                ...prev,
+                comments: data
+            }));
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    // const handleTaskClick = (task) => {
+    //     setSelectedTask({ ...task, comments: [] }); // сразу сбросить старые
+    //     fetchComments(task.taskId);
+    // };
+
 
     return (
     <div className="base-page">
@@ -530,12 +576,12 @@ const TaskPage = () => {
                           <div className="comments-list">
                               {(selectedTask.comments || []).length > 0 ? (
                                   selectedTask.comments.map(comment => (
-                                      <div key={comment.id} className="comment-item">
+                                      <div key={comment.commentId} className="comment-item">
                                           <div className="comment-header">
-                                              <span className="comment-author">{comment.authorEmail}</span>
-                                              <span className="comment-date">{formatDate(comment.createdAt)}</span>
+                                              <span className="comment-author">{comment.authorName}</span>
+                                              <span className="comment-date">{formatDateTime(comment.date)}</span>
                                           </div>
-                                          <div className="comment-body">{comment.text}</div>
+                                          <div className="comment-body">{comment.content}</div>
                                       </div>
                                   ))
                               ) : (

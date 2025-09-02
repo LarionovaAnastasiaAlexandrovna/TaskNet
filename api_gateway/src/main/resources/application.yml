@@ -3,7 +3,7 @@ server:
 
 spring:
   main:
-    web-application-type: reactive
+    web-application-type: servlet
     allow-bean-definition-overriding: true
   application:
     name: api-gateway
@@ -40,3 +40,8 @@ spring:
 app:
   verification:
     url: http://localhost:8081/auth/verify?token=
+
+#openapi:
+#  service:
+#    title: Api Gateway
+#    version: 0.0.1

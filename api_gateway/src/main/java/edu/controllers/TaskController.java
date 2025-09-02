@@ -199,7 +199,7 @@ public class TaskController {
         try {
             String token = authHeader.startsWith("Bearer ") ? authHeader.substring(7) : authHeader;
 
-            if (!jwtUtil.validateToken(token)) {
+            if (!jwtUtil.isInvalidToken(token)) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Недействительный токен");
             }
 
@@ -244,7 +244,7 @@ public class TaskController {
         try {
             String token = authHeader.startsWith("Bearer ") ? authHeader.substring(7) : authHeader;
 
-            if (!jwtUtil.validateToken(token)) {
+            if (!jwtUtil.isInvalidToken(token)) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Недействительный токен");
             }
 

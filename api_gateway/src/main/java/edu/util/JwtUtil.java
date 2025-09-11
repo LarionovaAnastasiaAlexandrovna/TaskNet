@@ -21,7 +21,7 @@ public class JwtUtil {
     // Генерация токена
     public String generateTokenSession(String email) {
         // 20 минут
-        long EXPIRATION_TIME_SESSION = 20 * 60 * 1000;
+        long EXPIRATION_TIME_SESSION = 60 * 60 * 1000;
         return Jwts.builder()
                 .setSubject(email)
                 .setIssuedAt(new Date())
@@ -48,10 +48,10 @@ public class JwtUtil {
                     .setSigningKey(getSigningKey())
                     .build()
                     .parseClaimsJws(token);
-            return true;
+            return false;
         } catch (JwtException e) {
             // Можно логировать разные ошибки: ExpiredJwtException, MalformedJwtException и т.п.
-            return false;
+            return true;
         }
     }
 

@@ -10,11 +10,11 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
@@ -30,19 +30,13 @@ public class ProfileController {
 
     @GetMapping
     @CrossOrigin(origins = "http://localhost:5173")
-    public ResponseEntity<?> getUserProfile(@RequestHeader("Authorization") String authHeader) {
+    public ResponseEntity<?> getUserProfile(Authentication authentication) {
         System.out.println("Запрос прилетает: отображение профиля");
 
         String scrapperUrl = INNER_URL + "profile";
 
         try {
-            String token = authHeader.startsWith("Bearer ") ? authHeader.substring(7) : authHeader;
-
-            if (jwtUtil.isInvalidToken(token)) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Недействительный токен");
-            }
-
-            String email = jwtUtil.extractEmail(token);
+            String email = authentication.getName(); // Email из токена
             System.out.println("Email из токена: " + email);
 
             HttpHeaders headers = new HttpHeaders();
@@ -68,19 +62,12 @@ public class ProfileController {
 
     @CrossOrigin(origins = "http://localhost:5173")
     @PutMapping("/update")
-    public ResponseEntity<?> updateUserProfile(@RequestHeader("Authorization") String authHeader,
-                                               @RequestBody UserDTO userDTO) {
+    public ResponseEntity<?> updateUserProfile(@RequestBody UserDTO userDTO) {
         System.out.println("Запрос прилетает: обновление профиля");
 
         String scrapperUrl = INNER_URL + "profile/update";
 
         try {
-            String token = authHeader.startsWith("Bearer ") ? authHeader.substring(7) : authHeader;
-
-            if (jwtUtil.isInvalidToken(token)) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Недействительный токен");
-            }
-
             HttpEntity<UserDTO> requestEntity = new HttpEntity<>(userDTO);
 
             ResponseEntity<UserDTO> scrapperResponse = restTemplate.exchange(

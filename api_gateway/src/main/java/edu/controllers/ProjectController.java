@@ -12,12 +12,12 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
@@ -32,23 +32,15 @@ public class ProjectController {
     private final RestTemplate restTemplate = new RestTemplate();
     private final String INNER_URL = "http://localhost:8082/innerprosses/";
 
-    @Autowired private JwtUtil jwtUtil;
-
     @CrossOrigin(origins = "http://localhost:5173")
     @PostMapping("/create")
-    public ResponseEntity<?> createProject(@RequestHeader("Authorization") String authHeader,
+    public ResponseEntity<?> createProject(Authentication authentication,
                                 /*@Valid*/ @RequestBody ProjectDTO request) {
         try {
             System.out.println("Запрос прилетает на создание проекта");
             String scrapperUrl = INNER_URL + "project/create";  // Адрес Scrapper-сервиса
 
-            String token = authHeader.startsWith("Bearer ") ? authHeader.substring(7) : authHeader;
-
-            if (jwtUtil.isInvalidToken(token)) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Недействительный токен");
-            }
-
-            String email = jwtUtil.extractEmail(token);
+            String email = authentication.getName(); // Email из токена
             System.out.println("Email из токена: " + email);
 
             HttpHeaders headers = new HttpHeaders();
@@ -75,18 +67,12 @@ public class ProjectController {
 
     @CrossOrigin(origins = "http://localhost:5173")
     @GetMapping("/all")
-    public ResponseEntity<?> getAllProject(@RequestHeader("Authorization") String authHeader) {
+    public ResponseEntity<?> getAllProject(Authentication authentication) {
 
         String scrapperUrl = INNER_URL + "project/all";  // Адрес Scrapper-сервиса
 
         try {
-        String token = authHeader.startsWith("Bearer ") ? authHeader.substring(7) : authHeader;
-
-        if (jwtUtil.isInvalidToken(token)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Недействительный токен");
-        }
-
-        String email = jwtUtil.extractEmail(token);
+        String email = authentication.getName(); // Email из токена
         System.out.println("Email из токена: " + email);
 
         HttpHeaders headers = new HttpHeaders();
@@ -113,18 +99,12 @@ public class ProjectController {
 
     @GetMapping("/{id}/all-users")
     @CrossOrigin(origins = "http://localhost:5173")
-    public ResponseEntity<?> getAllProjectUsers(@PathVariable Long id,
-                                                @RequestHeader("Authorization") String authHeader) {
+    public ResponseEntity<?> getAllProjectUsers(@PathVariable Long id) {
         System.out.println("Запрос прилетает: получение данных о связанных пользователях");
 
         String scrapperUrl = INNER_URL + "project/" + id + "/all-users";
 
         try {
-            String token = authHeader.startsWith("Bearer ") ? authHeader.substring(7) : authHeader;
-
-            if (jwtUtil.isInvalidToken(token)) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Недействительный токен");
-            }
 
             ResponseEntity<List<UserInProjectDTO>> scrapperResponse = restTemplate.exchange(
                     scrapperUrl,
@@ -146,20 +126,13 @@ public class ProjectController {
     @PostMapping("/{id}/add-user")
     @CrossOrigin(origins = "http://localhost:5173")
     public ResponseEntity<?> addUserInProject(@PathVariable Long id,
-                                              @RequestBody Map<String, String> requestBody,
-                                              @RequestHeader("Authorization") String authHeader) {
+                                              @RequestBody Map<String, String> requestBody) {
         String scrapperUrl = INNER_URL + "project/" + id + "/add-user";
         String email = requestBody.get("email");
 
         System.out.println("Добавление пользователя с email: " + email + " в проект ID: " + id);
 
         try {
-            String token = authHeader.startsWith("Bearer ") ? authHeader.substring(7) : authHeader;
-
-            if (jwtUtil.isInvalidToken(token)) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Недействительный токен");
-            }
-
             EmailRequestDTO emailRequestDTO = new EmailRequestDTO(email);
 
             HttpHeaders headers = new HttpHeaders();

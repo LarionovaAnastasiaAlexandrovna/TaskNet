@@ -2,8 +2,6 @@ package edu.controllers;
 
 import dto.CommentDTO;
 import dto.TaskDTO;
-import edu.util.JwtUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -11,13 +9,12 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
@@ -32,24 +29,14 @@ public class TaskController {
     private final RestTemplate restTemplate = new RestTemplate();
     private final String INNER_URL = "http://localhost:8082/innerprosses/";
 
-    @Autowired private JwtUtil jwtUtil;
-
-    @CrossOrigin(origins = "http://localhost:5173")
     @PostMapping("/create")
-    public ResponseEntity<?> createTask(@RequestHeader("Authorization") String authHeader,
-            /*@Valid*/ @RequestBody TaskDTO request) {
+    public ResponseEntity<?> createTask(Authentication authentication,
+                                        @RequestBody TaskDTO request) {
         try {
-            System.out.println("Запрос прилетает на создание задачи");
-            String scrapperUrl = INNER_URL + "task/create";  // Адрес Scrapper-сервиса
-
-            String token = authHeader.startsWith("Bearer ") ? authHeader.substring(7) : authHeader;
-
-            if (jwtUtil.isInvalidToken(token)) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Недействительный токен");
-            }
-
-            String email = jwtUtil.extractEmail(token);
+            String email = authentication.getName(); // Email из токена
             System.out.println("Email из токена: " + email);
+
+            String scrapperUrl = INNER_URL + "task/create";
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
@@ -73,21 +60,15 @@ public class TaskController {
         }
     }
 
-    @CrossOrigin(origins = "http://localhost:5173")
+//    @CrossOrigin(origins = "http://localhost:5173")
     @GetMapping("/recent")
-    public ResponseEntity<?> getRecentTasks(@RequestHeader("Authorization") String authHeader) {
+    public ResponseEntity<?> getRecentTasks(Authentication authentication) {
         System.out.println("Запрос прилетает: получение недавних задач");
 
         String scrapperUrl = INNER_URL + "task/recent";
 
         try {
-            String token = authHeader.startsWith("Bearer ") ? authHeader.substring(7) : authHeader;
-
-            if (jwtUtil.isInvalidToken(token)) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Недействительный токен");
-            }
-
-            String email = jwtUtil.extractEmail(token);
+            String email = authentication.getName(); // Email из токена
             System.out.println("Email из токена: " + email);
 
             HttpHeaders headers = new HttpHeaders();
@@ -111,24 +92,14 @@ public class TaskController {
         }
     }
 
-    @CrossOrigin(origins = "http://localhost:5173")
+//    @CrossOrigin(origins = "http://localhost:5173")
     @PutMapping("/{id}/view")
-    public ResponseEntity<?> updateLastView(@PathVariable Long id,
-                                            @RequestHeader("Authorization") String authHeader) {
+    public ResponseEntity<?> updateLastView(@PathVariable Long id) {
 
         System.out.println("Запрос прилетает: обновление последнего просмотра задачи");
         String scrapperUrl = INNER_URL + "task/" + id + "/view";
 
         try {
-            String token = authHeader.startsWith("Bearer ") ? authHeader.substring(7) : authHeader;
-
-            if (jwtUtil.isInvalidToken(token)) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Недействительный токен");
-            }
-
-            String email = jwtUtil.extractEmail(token);
-            System.out.println("Email из токена: " + email);
-
             HttpEntity<Void> emptyRequest = new HttpEntity<>(null);
 
             // TODO переделать под WebClient
@@ -152,21 +123,14 @@ public class TaskController {
         }
     }
 
-    @CrossOrigin(origins = "http://localhost:5173")
+//    @CrossOrigin(origins = "http://localhost:5173")
     @PutMapping("/{id}/update")
     public ResponseEntity<?> updateTask(@PathVariable Long id,
-                                        @RequestHeader("Authorization") String authHeader,
                                         @RequestBody TaskDTO taskDTO) {
         System.out.println("Запрос прилетает: обновление задачи");
 
-        String scrapperUrl = INNER_URL + "task/" + id + "/update";
-
         try {
-            String token = authHeader.startsWith("Bearer ") ? authHeader.substring(7) : authHeader;
-
-            if (jwtUtil.isInvalidToken(token)) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Недействительный токен");
-            }
+        String scrapperUrl = INNER_URL + "task/" + id + "/update";
 
             HttpEntity<TaskDTO> requestEntity = new HttpEntity<>(taskDTO);
 
@@ -187,23 +151,17 @@ public class TaskController {
         }
     }
 
-    @CrossOrigin(origins = "http://localhost:5173")
+//    @CrossOrigin(origins = "http://localhost:5173")
     @PostMapping("/{id}/add-comment")
     public ResponseEntity<?> addComment(@PathVariable Long id,
-                                        @RequestHeader("Authorization") String authHeader,
+                                        Authentication authentication,
                                         @RequestBody CommentDTO request) {
 
         System.out.println("Запрос прилетает: добавление нового комментария к задаче");
         String scrapperUrl = "http://localhost:8082/innerprosses/task/" + id + "/add-comment";
 
         try {
-            String token = authHeader.startsWith("Bearer ") ? authHeader.substring(7) : authHeader;
-
-            if (!jwtUtil.isInvalidToken(token)) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Недействительный токен");
-            }
-
-            String email = jwtUtil.extractEmail(token);
+            String email = authentication.getName(); // Email из токена
             System.out.println("Email из токена: " + email);
 
             HttpHeaders headers = new HttpHeaders();
@@ -233,20 +191,15 @@ public class TaskController {
         }
     }
 
-    @CrossOrigin(origins = "http://localhost:5173")
+//    @CrossOrigin(origins = "http://localhost:5173")
     @GetMapping("/{id}/comments")
-    public ResponseEntity<?> getCommentsByTask(@PathVariable Long id,
-                                               @RequestHeader("Authorization") String authHeader) {
+    public ResponseEntity<?> getCommentsByTask(@PathVariable Long id) {
+
         System.out.println("Запрос прилетает: получение комментариев к задаче №" + id);
 
         String scrapperUrl = "http://localhost:8082/innerprosses/task/" + id + "/comments";
 
         try {
-            String token = authHeader.startsWith("Bearer ") ? authHeader.substring(7) : authHeader;
-
-            if (!jwtUtil.isInvalidToken(token)) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Недействительный токен");
-            }
 
             ResponseEntity<List<CommentDTO>> scrapperResponse = restTemplate.exchange(
                     scrapperUrl,

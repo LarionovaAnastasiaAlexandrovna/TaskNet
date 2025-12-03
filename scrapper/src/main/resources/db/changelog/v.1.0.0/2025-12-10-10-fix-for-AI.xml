@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="2025-12-10-10-fix-for-AI" author="LAA">
+        <sql><![CDATA[
+    -- 1. Исправить несогласованные имена
+    ALTER TABLE projectusers RENAME COLUMN idproject TO project_id;
+    ALTER TABLE projectusers RENAME COLUMN iduser TO user_id;
+    ALTER TABLE Users RENAME COLUMN userId TO user_id;
+    ALTER TABLE Tasks RENAME COLUMN taskId TO task_id;
+
+    -- 2. Добавить каскадное удаление где его нет
+    ALTER TABLE tasks
+    DROP CONSTRAINT IF EXISTS tasks_template_id_fkey,
+    ADD CONSTRAINT tasks_template_id_fkey
+    FOREIGN KEY (template_id)
+    REFERENCES stage_templates(template_id)
+    ON DELETE SET NULL;
+
+    ALTER TABLE stage_templates
+    DROP CONSTRAINT IF EXISTS stage_templates_created_by_fkey,
+    ADD CONSTRAINT stage_templates_created_by_fkey
+    FOREIGN KEY (created_by)
+    REFERENCES users(user_id)
+    ON DELETE SET NULL;
+
+    ALTER TABLE tasks
+    DROP CONSTRAINT IF EXISTS tasks_created_by_fkey,
+    ADD CONSTRAINT tasks_created_by_fkey
+    FOREIGN KEY (created_by)
+    REFERENCES users(user_id)
+    ON DELETE SET NULL;
+
+    -- 3. Удалить избыточные индексы (если они созданы)
+    DROP INDEX IF EXISTS idx_task_stages_assigned_user;
+    DROP INDEX IF EXISTS idx_template_stages_template;
+    DROP INDEX IF EXISTS idx_template_stages_stage;
+
+    -- 4. Обновить ai_recommendations для ясности
+    ALTER TABLE ai_recommendations RENAME COLUMN user_id TO recommended_for_user_id;
+    ALTER TABLE ai_recommendations RENAME COLUMN accepted_by TO decision_by_user_id;
+
+-- Для ai_recommendations добавить CHECK
+    ALTER TABLE ai_recommendations
+        ADD CONSTRAINT check_confidence
+            CHECK (confidence_score BETWEEN 0 AND 1);
+            ]]></sql>
+    </changeSet>
+
+</databaseChangeLog>

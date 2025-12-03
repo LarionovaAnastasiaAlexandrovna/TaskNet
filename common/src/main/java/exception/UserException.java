@@ -1,5 +1,8 @@
 package exception;
 
+import lombok.Getter;
+
+@Getter
 public class UserException extends RuntimeException {
     public enum Type {
         USER_NOT_FOUND,
@@ -14,7 +17,4 @@ public class UserException extends RuntimeException {
         this.type = type;
     }
 
-    public Type getType() {
-        return type;
-    }
 }

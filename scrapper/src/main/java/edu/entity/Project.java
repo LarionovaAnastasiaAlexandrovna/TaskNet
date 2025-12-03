@@ -45,4 +45,3 @@ public class Project {
     @Column(name = "status", nullable = false, length = 50)
     ProjectStatus status;
 }
-

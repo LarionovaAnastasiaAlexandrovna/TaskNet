@@ -1,6 +1,6 @@
 package edu.util;
 
-import dto.UserDTO;
+import dto.user.UserDTO;
 import edu.entity.User;
 
 public class ConverterRequestUserDTO {

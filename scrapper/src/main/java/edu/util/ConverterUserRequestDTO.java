@@ -1,7 +1,7 @@
 package edu.util;
 
-import dto.RegisterRequestDTO;
-import dto.UserInProjectDTO;
+import dto.user.RegisterRequestDTO;
+import dto.project.UserInProjectDTO;
 import edu.entity.User;
 import enums.UserRole;
 
@@ -10,8 +10,8 @@ public class ConverterUserRequestDTO {
         User user = new User();
         user.setUserName(registerRequestDTO.getUsername());
         user.setEmail(registerRequestDTO.getEmail());
-        String passwordHash = registerRequestDTO.getPassword(); // TODO написать шифровальщик, а потом хеширование
-        user.setPasswordHash(passwordHash);
+        // TODO написать шифровальщик, а потом хеширование
+        user.setPasswordHash(registerRequestDTO.getPassword());
         user.setProfilePhoto(null);
         user.setRole(UserRole.USER);
         user.setEnabled(false);

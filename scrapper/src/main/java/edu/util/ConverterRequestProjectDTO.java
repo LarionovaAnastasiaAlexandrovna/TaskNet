@@ -1,6 +1,6 @@
 package edu.util;
 
-import dto.ProjectDTO;
+import dto.project.ProjectDTO;
 import edu.entity.Project;
 
 public class ConverterRequestProjectDTO {

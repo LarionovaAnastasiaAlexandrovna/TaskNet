@@ -1,6 +1,22 @@
 server:
   port: 8081
 
+cors:
+  enabled: true
+  paths:
+    - "/**"
+  origins:
+    - "http://localhost:5173"
+  methods:
+    - GET
+    - POST
+    - PUT
+    - DELETE
+    - OPTIONS
+  headers:
+    - "*"
+  allow-credentials: true
+
 spring:
   main:
     web-application-type: servlet
@@ -40,6 +56,10 @@ spring:
 app:
   verification:
     url: http://localhost:8081/auth/verify?token=
+
+inner:
+  auth:
+    url: http://localhost:8082/innerprosses
 
 #openapi:
 #  service:

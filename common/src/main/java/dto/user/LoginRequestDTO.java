@@ -1,22 +1,23 @@
-package dto;
+package dto.user;
 
-import jakarta.validation.constraints.Email;
+import annotation.Email;
+import dto.GeneralRequestDTO;
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
-@Data
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class RegisterRequestDTO extends GeneralRequestDTO {
-    @NotNull(message = "имя не может быть пустым")
-    String username;
-
+public class LoginRequestDTO extends GeneralRequestDTO {
     @NotNull(message = "email не может быть пустым")
-    @Email(message = "некорректный формат email")
+    @Email
     String email;
 
     @NotNull(message = "пароль не может быть пустым")

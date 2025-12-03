@@ -1,16 +1,15 @@
 package edu.service;
 
 import dto.GeneraleResponseDTO;
-import dto.ProfileResponseDTO;
-import dto.TaskDTO;
-import dto.UserDTO;
+import dto.user.ProfileResponseDTO;
+import dto.task.TaskDTO;
+import dto.user.UserDTO;
 import edu.entity.Task;
 import edu.entity.User;
 import edu.repository.TasksRepository;
 import edu.repository.UsersRepository;
 import edu.util.ConverterRequestUserDTO;
 import edu.util.ConverterTaskDTO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -20,15 +19,18 @@ import java.util.Optional;
 @Service
 public class ProfileUserServise {
 
-    @Autowired
-    private UsersRepository usersRepository;
+    private final UsersRepository usersRepository;
 
-    @Autowired
-    private TasksRepository tasksRepository;
+    private final TasksRepository tasksRepository;
 
     private final ConverterTaskDTO converterTask = new ConverterTaskDTO();
 
     private final ConverterRequestUserDTO converterUser = new ConverterRequestUserDTO();
+
+    public ProfileUserServise(UsersRepository usersRepository, TasksRepository tasksRepository) {
+        this.usersRepository = usersRepository;
+        this.tasksRepository = tasksRepository;
+    }
 
     public ProfileResponseDTO getProfileByEmail(String email) {
         User user = usersRepository.findByEmail(email)

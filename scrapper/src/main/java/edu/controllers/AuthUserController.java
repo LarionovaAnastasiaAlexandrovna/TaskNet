@@ -1,10 +1,10 @@
 package edu.controllers;
 
 import dto.GeneraleResponseDTO;
-import dto.LoginRequestDTO;
-import dto.RegisterRequestDTO;
+import dto.user.LoginRequestDTO;
+import dto.user.RegisterRequestDTO;
 import edu.entity.User;
-import edu.service.AuthUserServise;
+import edu.service.AuthUserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("innerprosses/auth")
 public class AuthUserController {
-    private final AuthUserServise usersService;
+    private final AuthUserService usersService;
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterRequestDTO registerRequestDTO) {

@@ -1,8 +1,8 @@
 package edu.controllers;
 
-import dto.CommentDTO;
+import dto.comment.CommentDTO;
 import dto.GeneraleResponseDTO;
-import dto.TaskDTO;
+import dto.task.TaskDTO;
 import edu.service.TaskService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;

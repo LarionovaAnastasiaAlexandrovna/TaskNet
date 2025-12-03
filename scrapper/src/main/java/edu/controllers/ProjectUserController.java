@@ -1,8 +1,8 @@
 package edu.controllers;
 
-import dto.EmailRequestDTO;
-import dto.ProjectDTO;
-import dto.UserInProjectDTO;
+import dto.user.EmailRequestDTO;
+import dto.project.ProjectDTO;
+import dto.project.UserInProjectDTO;
 import edu.service.ProjectService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;

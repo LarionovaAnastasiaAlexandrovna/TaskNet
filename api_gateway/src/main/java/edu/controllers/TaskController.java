@@ -1,13 +1,11 @@
 package edu.controllers;
 
-import dto.CommentDTO;
-import dto.TaskDTO;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
+import dto.comment.CommentDTO;
+import dto.task.TaskDTO;
+import edu.service.ScrapperTaskClient;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,207 +15,135 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/task")
+@RequiredArgsConstructor
 public class TaskController {
 
-    private final RestTemplate restTemplate = new RestTemplate();
-    private final String INNER_URL = "http://localhost:8082/innerprosses/";
+    private final ScrapperTaskClient scrapperTaskClient;
 
     @PostMapping("/create")
     public ResponseEntity<?> createTask(Authentication authentication,
                                         @RequestBody TaskDTO request) {
+        log.info("Запрос на создание задачи");
+
         try {
-            String email = authentication.getName(); // Email из токена
-            System.out.println("Email из токена: " + email);
+            String email = authentication.getName();
+            log.debug("Email из токена: {}", email);
 
-            String scrapperUrl = INNER_URL + "task/create";
+            var response = scrapperTaskClient.createTask(email, request);
+            log.info("Задача успешно создана пользователем: {}", email);
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            headers.set("X-User-Email", email);
-
-            ResponseEntity<TaskDTO> scrapperResponse = restTemplate.exchange(
-                    scrapperUrl,
-                    HttpMethod.POST,
-                    new HttpEntity<>(request, headers),
-                    TaskDTO.class
-            );
-
-            System.out.println("Запрос на создание задачи отправлен");
-            return ResponseEntity.status(scrapperResponse.getStatusCode())
-                    .body(scrapperResponse.getBody());
+            return ResponseEntity.ok(response);
 
         } catch (Exception e) {
-            System.out.println("Запрос на создание задачи не отправился");
+            log.error("Ошибка при создании задачи", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Ошибка создания задачи: " + e.getMessage());
         }
     }
 
-//    @CrossOrigin(origins = "http://localhost:5173")
     @GetMapping("/recent")
     public ResponseEntity<?> getRecentTasks(Authentication authentication) {
-        System.out.println("Запрос прилетает: получение недавних задач");
-
-        String scrapperUrl = INNER_URL + "task/recent";
+        log.info("Запрос на получение недавних задач");
 
         try {
-            String email = authentication.getName(); // Email из токена
-            System.out.println("Email из токена: " + email);
+            String email = authentication.getName();
+            log.debug("Email из токена: {}", email);
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            headers.set("X-User-Email", email);
+            var response = scrapperTaskClient.getRecentTasks(email);
+            log.info("Недавние задачи успешно получены для пользователя: {}", email);
 
-            ResponseEntity<List<TaskDTO>> scrapperResponse = restTemplate.exchange(
-                    scrapperUrl,
-                    HttpMethod.GET,
-                    new HttpEntity<>(headers),
-                    new ParameterizedTypeReference<>() {}
-            );
-
-            System.out.println("Запрос на получение недавних задач отправлен");
-            return ResponseEntity.status(scrapperResponse.getStatusCode()).body(scrapperResponse.getBody());
+            return ResponseEntity.ok(response);
 
         } catch (Exception e) {
-            System.out.println("Запрос на получение недавних задач не отправился");
+            log.error("Ошибка при получении недавних задач", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Ошибка получения недавних задач: " + e.getMessage());
         }
     }
 
-//    @CrossOrigin(origins = "http://localhost:5173")
     @PutMapping("/{id}/view")
     public ResponseEntity<?> updateLastView(@PathVariable Long id) {
-
-        System.out.println("Запрос прилетает: обновление последнего просмотра задачи");
-        String scrapperUrl = INNER_URL + "task/" + id + "/view";
+        log.info("Запрос на обновление последнего просмотра задачи ID: {}", id);
 
         try {
-            HttpEntity<Void> emptyRequest = new HttpEntity<>(null);
+            scrapperTaskClient.updateLastView(id);
+            log.info("Время просмотра задачи ID: {} успешно обновлено", id);
 
-            // TODO переделать под WebClient
-            ResponseEntity<Void> scrapperResponse = restTemplate.exchange(
-                    scrapperUrl,
-                    HttpMethod.PUT,
-                    emptyRequest,
-                    Void.class
-            );
-
-            System.out.println("Запрос на обновление последнего просмотра задачи отправлен");
-            return ResponseEntity.status(scrapperResponse.getStatusCode())
-                    .body(scrapperResponse.getStatusCode().is2xxSuccessful()
-                            ? null
-                            : "Ошибка при обновлении просмотра задачи");
+            return ResponseEntity.ok().build();
 
         } catch (Exception e) {
-            System.out.println("Запрос на обновление последнего просмотра задачи не отправился");
+            log.error("Ошибка при обновлении просмотра задачи ID: {}", id, e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Ошибка создания задачи: " + e.getMessage());
         }
     }
 
-//    @CrossOrigin(origins = "http://localhost:5173")
     @PutMapping("/{id}/update")
     public ResponseEntity<?> updateTask(@PathVariable Long id,
                                         @RequestBody TaskDTO taskDTO) {
-        System.out.println("Запрос прилетает: обновление задачи");
+        log.info("Запрос на обновление задачи ID: {}", id);
 
         try {
-        String scrapperUrl = INNER_URL + "task/" + id + "/update";
+            var response = scrapperTaskClient.updateTask(id, taskDTO);
+            log.info("Задача ID: {} успешно обновлена", id);
 
-            HttpEntity<TaskDTO> requestEntity = new HttpEntity<>(taskDTO);
-
-            ResponseEntity<TaskDTO> scrapperResponse = restTemplate.exchange(
-                    scrapperUrl,
-                    HttpMethod.PUT,
-                    requestEntity,
-                    TaskDTO.class
-            );
-
-            System.out.println("Запрос на обновление задачи отправлен");
-            return ResponseEntity.status(scrapperResponse.getStatusCode()).body(scrapperResponse.getBody());
+            return ResponseEntity.ok(response);
 
         } catch (Exception e) {
-            System.out.println("Запрос на обновление задачи не отправился");
+            log.error("Ошибка при обновлении задачи ID: {}", id, e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Ошибка обновления задачи: " + e.getMessage());
         }
     }
 
-//    @CrossOrigin(origins = "http://localhost:5173")
     @PostMapping("/{id}/add-comment")
     public ResponseEntity<?> addComment(@PathVariable Long id,
                                         Authentication authentication,
                                         @RequestBody CommentDTO request) {
-
-        System.out.println("Запрос прилетает: добавление нового комментария к задаче");
-        String scrapperUrl = "http://localhost:8082/innerprosses/task/" + id + "/add-comment";
+        log.info("Запрос на добавление комментария к задаче ID: {}", id);
 
         try {
-            String email = authentication.getName(); // Email из токена
-            System.out.println("Email из токена: " + email);
+            String email = authentication.getName();
+            log.debug("Email из токена: {}", email);
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            headers.set("X-User-Email", email);
-
+            // Устанавливаем ID задачи и дату
             request.setTaskId(id);
             request.setDate(LocalDateTime.now());
 
-            ResponseEntity<CommentDTO> scrapperResponse = restTemplate.exchange(
-                    scrapperUrl,
-                    HttpMethod.POST,
-                    new HttpEntity<>(request, headers),
-                    CommentDTO.class
-            );
+            var response = scrapperTaskClient.addComment(id, email, request);
+            log.info("Комментарий успешно добавлен к задаче ID: {}", id);
 
-            System.out.println("Запрос на добавление нового комментария к задаче отправлен");
-            return ResponseEntity.status(scrapperResponse.getStatusCode())
-                    .body(scrapperResponse.getStatusCode().is2xxSuccessful()
-                            ? scrapperResponse.getBody()
-                            : "Ошибка при добавлении нового комментария к задаче");
+            return ResponseEntity.ok(response);
 
         } catch (Exception e) {
-            System.out.println("Запрос на добавление нового комментария к задаче не отправился");
+            log.error("Ошибка при добавлении комментария к задаче ID: {}", id, e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Ошибка добавления нового комментария к задаче: " + e.getMessage());
         }
     }
 
-//    @CrossOrigin(origins = "http://localhost:5173")
     @GetMapping("/{id}/comments")
     public ResponseEntity<?> getCommentsByTask(@PathVariable Long id) {
-
-        System.out.println("Запрос прилетает: получение комментариев к задаче №" + id);
-
-        String scrapperUrl = "http://localhost:8082/innerprosses/task/" + id + "/comments";
+        log.info("Запрос на получение комментариев к задаче ID: {}", id);
 
         try {
+            var response = scrapperTaskClient.getCommentsByTask(id);
+            log.info("Комментарии к задаче ID: {} успешно получены", id);
 
-            ResponseEntity<List<CommentDTO>> scrapperResponse = restTemplate.exchange(
-                    scrapperUrl,
-                    HttpMethod.GET,
-                    null,
-                    new ParameterizedTypeReference<>() {}
-            );
-
-            System.out.println("Запрос на получение получение комментариев к задаче №" + id + " отправлен");
-            return ResponseEntity.status(scrapperResponse.getStatusCode()).body(scrapperResponse.getBody());
+            return ResponseEntity.ok(response);
 
         } catch (Exception e) {
-            System.out.println("Запрос на получение комментариев к задаче №" + id + " не отправился");
+            log.error("Ошибка при получении комментариев задачи ID: {}", id, e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Ошибка получения комментариев к задаче №" + id + e.getMessage());
         }
     }
-
 }
 
 //TODO: исправить баг невозможности редактировать текстовые поля задачи в режиме редактирование

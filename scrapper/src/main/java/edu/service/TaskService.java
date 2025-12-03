@@ -1,8 +1,8 @@
 package edu.service;
 
-import dto.CommentDTO;
+import dto.comment.CommentDTO;
 import dto.GeneraleResponseDTO;
-import dto.TaskDTO;
+import dto.task.TaskDTO;
 import edu.entity.Comment;
 import edu.entity.Task;
 import edu.entity.User;

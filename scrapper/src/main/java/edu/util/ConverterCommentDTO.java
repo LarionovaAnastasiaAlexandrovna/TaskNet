@@ -1,6 +1,6 @@
 package edu.util;
 
-import dto.CommentDTO;
+import dto.comment.CommentDTO;
 import edu.entity.Comment;
 import edu.entity.Task;
 import edu.entity.User;
@@ -34,7 +34,6 @@ public class ConverterCommentDTO {
     public List<CommentDTO> convertComments(List<Comment> comments) {
         return comments.stream()
                 .map(comment -> {
-//                    assert comment. != null;
                     return new CommentDTO(
                             comment.getCommentId(),
                             comment.getContent(),

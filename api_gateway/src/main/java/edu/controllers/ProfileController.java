@@ -1,14 +1,10 @@
 package edu.controllers;
 
-import dto.ProfileResponseDTO;
-import dto.UserDTO;
-import edu.util.JwtUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
+import dto.user.UserDTO;
+import edu.service.ScrapperProfileClient;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -17,71 +13,49 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
+@Slf4j
 @RestController
 @RequestMapping("/profile")
+@RequiredArgsConstructor
 public class ProfileController {
 
-    private final RestTemplate restTemplate = new RestTemplate();
-    private final String INNER_URL = "http://localhost:8082/innerprosses/";
-
-    @Autowired private JwtUtil jwtUtil;
+    private final ScrapperProfileClient scrapperProfileClient;
 
     @GetMapping
     @CrossOrigin(origins = "http://localhost:5173")
     public ResponseEntity<?> getUserProfile(Authentication authentication) {
-        System.out.println("Запрос прилетает: отображение профиля");
-
-        String scrapperUrl = INNER_URL + "profile";
+        log.info("Запрос на отображение профиля пользователя");
 
         try {
-            String email = authentication.getName(); // Email из токена
-            System.out.println("Email из токена: " + email);
+            String email = authentication.getName();
+            log.debug("Email из токена: {}", email);
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            headers.set("X-User-Email", email);
+            var response = scrapperProfileClient.getUserProfile(email);
+            log.info("Профиль успешно получен для пользователя: {}", email);
 
-            ResponseEntity<ProfileResponseDTO> scrapperResponse = restTemplate.exchange(
-                    scrapperUrl,
-                    HttpMethod.GET,
-                    new HttpEntity<>(headers),
-                    ProfileResponseDTO.class
-            );
-
-            System.out.println("Запрос на отображение профиля отправлен");
-            return ResponseEntity.status(scrapperResponse.getStatusCode()).body(scrapperResponse.getBody());
+            return ResponseEntity.ok(response);
 
         } catch (Exception e) {
-            System.out.println("Запрос на отображение профиля не отправился");
+            log.error("Ошибка при получении профиля", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Ошибка отображения профиля: " + e.getMessage());
         }
     }
 
-    @CrossOrigin(origins = "http://localhost:5173")
     @PutMapping("/update")
+    @CrossOrigin(origins = "http://localhost:5173")
     public ResponseEntity<?> updateUserProfile(@RequestBody UserDTO userDTO) {
-        System.out.println("Запрос прилетает: обновление профиля");
-
-        String scrapperUrl = INNER_URL + "profile/update";
+        log.info("Запрос на обновление профиля пользователя: {}", userDTO.getEmail());
 
         try {
-            HttpEntity<UserDTO> requestEntity = new HttpEntity<>(userDTO);
+            var response = scrapperProfileClient.updateUserProfile(userDTO);
+            log.info("Профиль успешно обновлен для пользователя: {}", userDTO.getEmail());
 
-            ResponseEntity<UserDTO> scrapperResponse = restTemplate.exchange(
-                    scrapperUrl,
-                    HttpMethod.PUT,
-                    requestEntity,
-                    UserDTO.class
-            );
-
-            System.out.println("Запрос на обновление профиля отправлен");
-            return ResponseEntity.status(scrapperResponse.getStatusCode()).body(scrapperResponse.getBody());
+            return ResponseEntity.ok(response);
 
         } catch (Exception e) {
-            System.out.println("Запрос на обновление профиля не отправился");
+            log.error("Ошибка при обновлении профиля", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Ошибка обновления профиля: " + e.getMessage());
         }

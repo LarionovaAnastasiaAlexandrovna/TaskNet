@@ -1,16 +1,10 @@
 package edu.controllers;
 
-import dto.EmailRequestDTO;
-import dto.ProjectDTO;
-import dto.UserInProjectDTO;
-import edu.util.JwtUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
+import dto.project.ProjectDTO;
+import edu.service.ScrapperProjectClient;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -20,78 +14,55 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
-import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequestMapping("/project")
+@RequiredArgsConstructor
 public class ProjectController {
 
-    private final RestTemplate restTemplate = new RestTemplate();
-    private final String INNER_URL = "http://localhost:8082/innerprosses/";
+    private final ScrapperProjectClient scrapperProjectClient;
 
-    @CrossOrigin(origins = "http://localhost:5173")
     @PostMapping("/create")
+    @CrossOrigin(origins = "http://localhost:5173")
     public ResponseEntity<?> createProject(Authentication authentication,
-                                /*@Valid*/ @RequestBody ProjectDTO request) {
+                                           @RequestBody ProjectDTO request) {
+        log.info("Запрос на создание проекта");
+
         try {
-            System.out.println("Запрос прилетает на создание проекта");
-            String scrapperUrl = INNER_URL + "project/create";  // Адрес Scrapper-сервиса
+            String email = authentication.getName();
+            log.debug("Email из токена: {}", email);
 
-            String email = authentication.getName(); // Email из токена
-            System.out.println("Email из токена: " + email);
+            var response = scrapperProjectClient.createProject(email, request);
+            log.info("Проект успешно создан пользователем: {}", email);
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            headers.set("X-User-Email", email);
-
-            ResponseEntity<ProjectDTO> scrapperResponse = restTemplate.exchange(
-                    scrapperUrl,
-                    HttpMethod.POST,
-                    new HttpEntity<>(request, headers),
-                    ProjectDTO.class
-            );
-
-            System.out.println("Запрос на создание проекта отправлен");
-            return ResponseEntity.status(scrapperResponse.getStatusCode())
-                    .body(scrapperResponse.getBody());
+            return ResponseEntity.ok(response);
 
         } catch (Exception e) {
-            System.out.println("Запрос на создание проекта не отправился");
+            log.error("Ошибка при создании проекта", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Ошибка создания проекта: " + e.getMessage());
         }
     }
 
-    @CrossOrigin(origins = "http://localhost:5173")
     @GetMapping("/all")
+    @CrossOrigin(origins = "http://localhost:5173")
     public ResponseEntity<?> getAllProject(Authentication authentication) {
-
-        String scrapperUrl = INNER_URL + "project/all";  // Адрес Scrapper-сервиса
+        log.info("Запрос на получение всех проектов");
 
         try {
-        String email = authentication.getName(); // Email из токена
-        System.out.println("Email из токена: " + email);
+            String email = authentication.getName();
+            log.debug("Email из токена: {}", email);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("X-User-Email", email);
+            var response = scrapperProjectClient.getAllProjects(email);
+            log.info("Все проекты успешно получены для пользователя: {}", email);
 
-            ResponseEntity<List<ProjectDTO>> scrapperResponse = restTemplate.exchange(
-                    scrapperUrl,
-                    HttpMethod.GET,
-                    new HttpEntity<>(headers),
-                    new ParameterizedTypeReference<>() {}
-            );
-
-
-        return ResponseEntity.status(scrapperResponse.getStatusCode())
-                .body(scrapperResponse.getBody());
+            return ResponseEntity.ok(response);
 
         } catch (Exception e) {
-            System.out.println("Запрос на получение всех связанных проектов не отправился");
+            log.error("Ошибка при получении всех проектов", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Ошибка получения всех связанных проектов: " + e.getMessage());
         }
@@ -100,24 +71,16 @@ public class ProjectController {
     @GetMapping("/{id}/all-users")
     @CrossOrigin(origins = "http://localhost:5173")
     public ResponseEntity<?> getAllProjectUsers(@PathVariable Long id) {
-        System.out.println("Запрос прилетает: получение данных о связанных пользователях");
-
-        String scrapperUrl = INNER_URL + "project/" + id + "/all-users";
+        log.info("Запрос на получение данных о связанных пользователях проекта ID: {}", id);
 
         try {
+            var response = scrapperProjectClient.getAllProjectUsers(id);
+            log.info("Данные о пользователях проекта ID: {} успешно получены", id);
 
-            ResponseEntity<List<UserInProjectDTO>> scrapperResponse = restTemplate.exchange(
-                    scrapperUrl,
-                    HttpMethod.GET,
-                    new HttpEntity<>(id),
-                    new ParameterizedTypeReference<>() {}
-            );
-
-            System.out.println("Запрос на получение данных о связанных пользователях отправлен");
-            return ResponseEntity.status(scrapperResponse.getStatusCode()).body(scrapperResponse.getBody());
+            return ResponseEntity.ok(response);
 
         } catch (Exception e) {
-            System.out.println("Запрос на получение данных о связанных пользователях не отправился");
+            log.error("Ошибка при получении пользователей проекта ID: {}", id, e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Ошибка получения данных о связанных пользователях: " + e.getMessage());
         }
@@ -127,31 +90,17 @@ public class ProjectController {
     @CrossOrigin(origins = "http://localhost:5173")
     public ResponseEntity<?> addUserInProject(@PathVariable Long id,
                                               @RequestBody Map<String, String> requestBody) {
-        String scrapperUrl = INNER_URL + "project/" + id + "/add-user";
         String email = requestBody.get("email");
-
-        System.out.println("Добавление пользователя с email: " + email + " в проект ID: " + id);
+        log.info("Добавление пользователя с email: {} в проект ID: {}", email, id);
 
         try {
-            EmailRequestDTO emailRequestDTO = new EmailRequestDTO(email);
+            scrapperProjectClient.addUserToProject(id, email);
+            log.info("Пользователь с email: {} успешно добавлен в проект ID: {}", email, id);
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-
-            HttpEntity<EmailRequestDTO> entity = new HttpEntity<>(emailRequestDTO, headers);
-
-            ResponseEntity<Void> scrapperResponse = restTemplate.exchange(
-                    scrapperUrl,
-                    HttpMethod.POST,
-                    entity,
-                    Void.class
-            );
-
-            System.out.println("Запрос на добавление пользователя с email: " + email + " в проект ID: " + id + " отправлен");
-            return ResponseEntity.status(scrapperResponse.getStatusCode()).body(scrapperResponse.getBody());
+            return ResponseEntity.ok().build();
 
         } catch (Exception e) {
-            System.out.println("Запрос на добавление пользователя с email: " + email + " в проект ID: " + id + " не отправился");
+            log.error("Ошибка при добавлении пользователя с email: {} в проект ID: {}", email, id, e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Ошибка добавления пользователя с email: " + email + " в проект ID: " + id + " " + e.getMessage());
         }

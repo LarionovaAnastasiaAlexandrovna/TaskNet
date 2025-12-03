@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="2025-12-09-9-add-for-AI" author="LAA">
+        <sql><![CDATA[
+-- библиотека шаблонов ("Веб-разработка", "Багфикс")
+    CREATE TABLE stage_templates (
+        template_id SERIAL PRIMARY KEY,
+        template_name VARCHAR(255) NOT NULL UNIQUE,
+        description TEXT,
+        is_active BOOLEAN DEFAULT TRUE,
+        created_by INTEGER REFERENCES users(userId),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
+    ALTER TABLE users
+        ADD COLUMN hourly_rate DECIMAL(10, 2),           -- Для расчета стоимости проекта и оптимизации бюджета
+        ADD COLUMN preferred_categories TEXT[],          -- Какие типы задач предпочитает (для рекомендаций ИИ)
+        ADD COLUMN total_experience_months INTEGER;      -- Общий опыт в месяцах (для прогнозирования скорости)
+
+    ALTER TABLE tasks
+        ADD COLUMN estimated_hours DECIMAL(10, 2),       -- Прогноз трудозатрат от ИИ (основная метрика)
+        ADD COLUMN actual_hours DECIMAL(10,2),           -- Фактические трудозатраты (для обучения модели)
+        ADD COLUMN ai_category VARCHAR(100),             -- Категория, определенная NLP-моделью
+        ADD COLUMN ai_priority_score DECIMAL(5,2),       -- Приоритет, рассчитанный ИИ (0-1, где 1 - максимальный)
+        ADD COLUMN complexity_score INTEGER CHECK (complexity_score >= 1 AND complexity_score <= 10), -- Оценка сложности
+        ADD COLUMN last_ai_review TIMESTAMP,             -- Когда ИИ последний раз анализировал задачу
+        ADD COLUMN created_by INTEGER REFERENCES users(userId),  -- Кто создал задачу (для анализа)
+        ADD COLUMN template_id INTEGER REFERENCES stage_templates(template_id); -- Какой шаблон использовался
+
+-- библиотека всех возможных этапов ("Анализ", "Разработка", "Тестирование")
+    CREATE TABLE global_stages (
+        stage_id SERIAL PRIMARY KEY,
+        stage_name VARCHAR(255) NOT NULL UNIQUE,
+        description TEXT,
+        default_planned_hours DECIMAL(10,2) DEFAULT 0,
+        stage_type VARCHAR(50) DEFAULT 'default',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
+-- связь: какие этапы входят в какой шаблон
+    CREATE TABLE template_stages (
+        id SERIAL PRIMARY KEY,
+        template_id INTEGER NOT NULL REFERENCES stage_templates(template_id) ON DELETE CASCADE,
+        stage_id INTEGER NOT NULL REFERENCES global_stages(stage_id),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE(template_id, stage_id)
+    );
+
+-- фактические этапы выполнения конкретной задачи
+    CREATE TABLE task_stages (
+        task_stage_id SERIAL PRIMARY KEY,
+        task_id INTEGER NOT NULL REFERENCES tasks(taskId) ON DELETE CASCADE,
+        global_stage_id INTEGER REFERENCES global_stages(stage_id) ON DELETE SET NULL,
+        custom_stage_name VARCHAR(255),
+        assigned_user_id INTEGER REFERENCES users(userId) ON DELETE SET NULL,
+        planned_hours DECIMAL(10,2) NOT NULL,
+        actual_hours DECIMAL(10,2),
+        status VARCHAR(50) DEFAULT 'pending',
+        position INTEGER DEFAULT 0,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        CONSTRAINT stage_name_check CHECK (
+             (global_stage_id IS NOT NULL) OR
+             (global_stage_id IS NULL AND custom_stage_name IS NOT NULL)
+         )
+    );
+
+-- связи между задачами (родитель-потомок, блокировки)
+    CREATE TABLE task_relations (
+        relation_id SERIAL PRIMARY KEY,
+        parent_task_id INTEGER NOT NULL REFERENCES tasks(taskId) ON DELETE CASCADE,
+        child_task_id INTEGER NOT NULL REFERENCES tasks(taskId) ON DELETE CASCADE,
+        relation_type VARCHAR(50) DEFAULT 'subtask',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE(parent_task_id, child_task_id)
+    );
+
+-- лог изменений (основной источник данных для ИИ)
+    CREATE TABLE task_history (
+        history_id SERIAL PRIMARY KEY,
+        task_id INTEGER NOT NULL REFERENCES tasks(taskId) ON DELETE CASCADE,
+        changed_by INTEGER REFERENCES users(userId) ON DELETE SET NULL,
+        change_type VARCHAR(50) NOT NULL,
+        field_name VARCHAR(100),
+        old_value TEXT,
+        new_value TEXT,
+        task_stage_id INTEGER REFERENCES task_stages(task_stage_id) ON DELETE SET NULL,
+        timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        metadata JSONB
+    );
+
+-- НАВЫКИ ПОЛЬЗОВАТЕЛЕЙ: матрица компетенций для интеллектуального назначения задач
+    CREATE TABLE user_skills (
+        skill_id SERIAL PRIMARY KEY,
+        user_id INTEGER NOT NULL REFERENCES users(userId) ON DELETE CASCADE,
+        skill_name VARCHAR(100) NOT NULL,            -- "Java", "React", "UI/UX Design"
+        proficiency_level VARCHAR(50) DEFAULT 'Intermediate', -- Beginner, Intermediate, Advanced, Expert
+        experience_years DECIMAL(3, 1),              -- Опыт в годах (2.5 = 2.5 года)
+        is_verified BOOLEAN DEFAULT FALSE,           -- Подтвержден ли навык руководителем
+        last_used DATE,                              -- Когда последний раз использовался (для актуальности)
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
+-- 9. МЕТРИКИ ЭФФЕКТИВНОСТИ: исторические данные для обучения моделей прогнозирования
+    CREATE TABLE performance_metrics (
+         metric_id SERIAL PRIMARY KEY,
+         task_id INTEGER NOT NULL REFERENCES tasks(taskId) ON DELETE CASCADE,
+         task_stage_id INTEGER REFERENCES task_stages(task_stage_id) ON DELETE SET NULL,
+         user_id INTEGER REFERENCES users(userId) ON DELETE SET NULL,
+        -- Временные метрики (для прогнозирования сроков)
+         estimated_hours DECIMAL(10, 2),              -- Что планировалось
+         actual_hours DECIMAL(10, 2),                 -- Что получилось
+         efficiency_ratio DECIMAL(5, 2),              -- Коэффициент эффективности
+        -- Качественные метрики (для оценки рисков)
+         quality_score INTEGER CHECK (quality_score >= 1 AND quality_score <= 5),
+         rework_count INTEGER DEFAULT 0,              -- Количество доработок (индикатор проблем)
+         blocker_count INTEGER DEFAULT 0,             -- Количество блокировок
+        -- Даты для временного анализа
+         started_at TIMESTAMP,
+         completed_at TIMESTAMP,
+         calculated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
+-- 10. РЕКОМЕНДАЦИИ ИИ: лог всех рекомендаций системы для анализа их полезности
+    CREATE TABLE ai_recommendations (
+        recommendation_id SERIAL PRIMARY KEY,
+        task_id INTEGER REFERENCES tasks(taskId) ON DELETE SET NULL,
+        task_stage_id INTEGER REFERENCES task_stages(task_stage_id) ON DELETE SET NULL,
+        user_id INTEGER REFERENCES users(userId) ON DELETE SET NULL,
+        recommendation_type VARCHAR(50) NOT NULL,    -- 'assignment', 'time_estimate', 'priority'
+        recommended_value TEXT NOT NULL,              -- Сама рекомендация (JSON или текст)
+        confidence_score DECIMAL(5,4),               -- Уверенность ИИ от 0 до 1
+        explanation TEXT,                            -- Объяснение на естественном языке
+        -- Трек принятия рекомендации пользователем
+        accepted BOOLEAN DEFAULT NULL,               -- NULL=не рассмотрено, TRUE/FALSE
+        accepted_by INTEGER REFERENCES users(userId),
+        accepted_at TIMESTAMP,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE INDEX idx_user_skills_user_id ON user_skills(user_id);
+    CREATE INDEX idx_user_skills_skill ON user_skills(skill_name);
+    CREATE INDEX idx_performance_metrics_user_id ON performance_metrics(user_id);
+    CREATE INDEX idx_performance_metrics_task_id ON performance_metrics(task_id);
+    CREATE INDEX idx_performance_metrics_stage ON performance_metrics(task_stage_id);
+    CREATE INDEX idx_ai_recommendations_task ON ai_recommendations(task_id);
+    CREATE INDEX idx_ai_recommendations_type ON ai_recommendations(recommendation_type);
+
+    CREATE INDEX idx_task_relations_parent ON task_relations(parent_task_id);
+    CREATE INDEX idx_task_relations_child ON task_relations(child_task_id);
+    CREATE INDEX idx_template_stages_template ON template_stages(template_id); -- вместо idx_template_sequences_template
+    CREATE INDEX idx_template_stages_stage ON template_stages(stage_id);
+    -- Для быстрого поиска задач по этапам
+    CREATE INDEX idx_task_stages_global_stage ON task_stages(global_stage_id);
+    CREATE INDEX idx_task_stages_status ON task_stages(status);
+    -- Для аналитики (часто используемые запросы)
+    CREATE INDEX idx_tasks_ai_category ON tasks(ai_category);
+    CREATE INDEX idx_tasks_complexity ON tasks(complexity_score);
+    -- Для связи этапов и пользователей
+    CREATE INDEX idx_task_stages_assigned_user ON task_stages(assigned_user_id);
+
+            ]]></sql>
+    </changeSet>
+
+</databaseChangeLog>

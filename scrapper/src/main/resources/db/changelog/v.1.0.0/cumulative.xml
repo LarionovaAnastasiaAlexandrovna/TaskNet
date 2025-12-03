@@ -12,4 +12,5 @@
     <include file="2025-05-08-6-add-column-Tasks-Projects.xml" relativeToChangelogFile="true" />
     <include file="2025-05-16-7-fix-column-Tasks-Projects.xml" relativeToChangelogFile="true" />
     <include file="2025-08-26-8-add-column-Users.xml" relativeToChangelogFile="true" />
+    <include file="2025-12-10-10-fix-for-AI.xml" relativeToChangelogFile="true" />
 </databaseChangeLog>

@@ -1,10 +1,8 @@
 package enums;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 @Getter
-@RequiredArgsConstructor
 public enum TaskPriority {
     LOWEST(1, "LOWEST"),
     LOW(2, "LOW"),
@@ -15,5 +13,8 @@ public enum TaskPriority {
     private final int level;
     private final String description;
 
+    TaskPriority(int level, String description) {
+        this.level = level;
+        this.description = description;
+    }
 }
-

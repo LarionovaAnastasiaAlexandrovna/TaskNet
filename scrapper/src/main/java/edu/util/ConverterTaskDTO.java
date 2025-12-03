@@ -1,7 +1,6 @@
 package edu.util;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import dto.TaskDTO;
+import dto.task.TaskDTO;
 import edu.entity.Project;
 import edu.entity.Task;
 import edu.entity.User;
@@ -11,8 +10,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ConverterTaskDTO {
-
-    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     public Task convertTaskDTO(TaskDTO taskDTO, User user) {
         Task task = new Task();

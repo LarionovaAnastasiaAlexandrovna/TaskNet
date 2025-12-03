@@ -43,5 +43,3 @@ public class Comment {
     @Column(name = "date", nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     LocalDateTime date = LocalDateTime.now();
 }
-// TODO: продумать и написать DTO-шки
-// TODO: написать пока простые контроллеры

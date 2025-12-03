@@ -1,8 +1,8 @@
 package edu.controllers;
 
 import dto.GeneraleResponseDTO;
-import dto.ProfileResponseDTO;
-import dto.UserDTO;
+import dto.user.ProfileResponseDTO;
+import dto.user.UserDTO;
 import edu.service.ProfileUserServise;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

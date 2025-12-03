@@ -1,7 +1,7 @@
 package edu.service;
 
-import dto.ProjectDTO;
-import dto.UserInProjectDTO;
+import dto.project.ProjectDTO;
+import dto.project.UserInProjectDTO;
 import edu.entity.Project;
 import edu.entity.ProjectUser;
 import edu.entity.User;
@@ -11,7 +11,6 @@ import edu.repository.UsersRepository;
 import edu.util.ConverterUserRequestDTO;
 import edu.util.ConverterRequestProjectDTO;
 import enums.ProjectStatus;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,17 +19,20 @@ import java.util.stream.Collectors;
 
 @Service
 public class ProjectService {
-    @Autowired
-    private ProjectsRepository projectsRepository;
+    private final ProjectsRepository projectsRepository;
 
-    @Autowired
-    private UsersRepository usersRepository;
+    private final UsersRepository usersRepository;
 
-    @Autowired
-    private ProjectUserRepository projectUserRepository;
+    private final ProjectUserRepository projectUserRepository;
 
     private final ConverterRequestProjectDTO converter = new ConverterRequestProjectDTO();
     private final ConverterUserRequestDTO converterUser = new ConverterUserRequestDTO();
+
+    public ProjectService(ProjectsRepository projectsRepository, UsersRepository usersRepository, ProjectUserRepository projectUserRepository) {
+        this.projectsRepository = projectsRepository;
+        this.usersRepository = usersRepository;
+        this.projectUserRepository = projectUserRepository;
+    }
 
     public ProjectDTO saveNew(ProjectDTO createProjectRequestDTO, String email) {
 

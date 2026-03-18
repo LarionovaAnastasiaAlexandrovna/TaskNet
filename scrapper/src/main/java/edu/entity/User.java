@@ -30,7 +30,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Access(AccessType.PROPERTY)  // Явный доступ через геттер
-    @Column(name = "userid", nullable = false)
+    @Column(name = "user_id", nullable = false)
     Long userId;
 
     @Column(name = "username", nullable = false)

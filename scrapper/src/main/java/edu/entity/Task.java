@@ -32,7 +32,7 @@ import java.time.LocalDateTime;
 public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "taskid", nullable = false)
+    @Column(name = "task_id", nullable = false)
     Long taskId;
 
     @Column(name = "taskname", nullable = false, length = 255)

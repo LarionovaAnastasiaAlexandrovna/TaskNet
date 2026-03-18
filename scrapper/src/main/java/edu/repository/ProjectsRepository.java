@@ -16,20 +16,20 @@ public interface ProjectsRepository extends JpaRepository<Project, Long> {
 
     @Query(value = """
     SELECT p.* FROM Projects p
-    JOIN ProjectUsers pu ON p.projectId = pu.idproject
-    JOIN Users u ON pu.iduser = u.userId
+    JOIN ProjectUsers pu ON p.projectid = pu.project_id
+    JOIN Users u ON pu.user_id = u.user_id
     WHERE u.email = :email
     """, nativeQuery = true)
     List<Project> findAllByUserEmail(@Param("email") String email);
 
-    @Query("SELECT pu.user FROM ProjectUser pu WHERE pu.project.id = :id")
+    @Query("SELECT pu.user FROM ProjectUser pu WHERE pu.project.projectId = :id")
     List<User> findAllByProjectId(@Param("id") Long id);
 
     @Modifying
     @Transactional
     @Query(value = """
-        INSERT INTO ProjectUsers (iduser, idproject)
-        SELECT u.userid, :id
+        INSERT INTO ProjectUsers (user_id, project_id)
+        SELECT u.user_id, :id
         FROM Users u
         WHERE u.email = :email
         """, nativeQuery = true)

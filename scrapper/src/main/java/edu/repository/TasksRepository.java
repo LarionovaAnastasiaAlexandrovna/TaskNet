@@ -18,13 +18,13 @@ public interface TasksRepository extends JpaRepository<Task, Long> {
     @Query(value = """
     SELECT t.* FROM Tasks t, Users U
     WHERE u.email = :email
-    AND t.assignedTo = u.userId
+    AND t.assignedTo = u.user_id
     ORDER BY date_last_view DESC;
     """, nativeQuery = true)
     List<Task> findAllByUserEmailOrderByDateLastView(String email);
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE tasks SET date_last_view = NOW() WHERE taskid = :id", nativeQuery = true)
+    @Query(value = "UPDATE tasks SET date_last_view = NOW() WHERE task_id = :id", nativeQuery = true)
     void updateLastViewById(@Param("id") Long id);
 }

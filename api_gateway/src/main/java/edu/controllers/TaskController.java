@@ -2,12 +2,15 @@ package edu.controllers;
 
 import dto.comment.CommentDTO;
 import dto.task.TaskDTO;
+import dto.user.UserDTO;
 import edu.service.ScrapperTaskClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -144,6 +147,15 @@ public class TaskController {
                     .body("Ошибка получения комментариев к задаче №" + id + e.getMessage());
         }
     }
+
+    @DeleteMapping("/delete/{taskId}")
+    @CrossOrigin(origins = "http://localhost:5173")
+    public ResponseEntity<?> deleteUserProfile(@RequestBody UserDTO userDTO) {
+        log.info("Запрос на обновление профиля пользователя: {}", userDTO.getEmail());
+
+        return null;
+    }
+
 }
 
 //TODO: исправить баг невозможности редактировать текстовые поля задачи в режиме редактирование

@@ -1,6 +1,7 @@
 package edu.controllers;
 
 import dto.project.ProjectDTO;
+import dto.user.UserDTO;
 import edu.service.ScrapperProjectClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -104,5 +106,13 @@ public class ProjectController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Ошибка добавления пользователя с email: " + email + " в проект ID: " + id + " " + e.getMessage());
         }
+    }
+
+    @DeleteMapping("/delete/{projectId}")
+    @CrossOrigin(origins = "http://localhost:5173")
+    public ResponseEntity<?> deleteUserProfile(@RequestBody UserDTO userDTO) {
+        log.info("Запрос на обновление профиля пользователя: {}", userDTO.getEmail());
+
+       return null;
     }
 }

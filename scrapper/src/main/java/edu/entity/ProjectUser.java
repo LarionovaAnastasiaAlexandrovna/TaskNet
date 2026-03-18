@@ -28,10 +28,10 @@ public class ProjectUser {
     Long id;
 
     @ManyToOne
-    @JoinColumn(name = "idproject", nullable = false, foreignKey = @ForeignKey(name = "fk_project_users_project"))
+    @JoinColumn(name = "project_id", nullable = false, foreignKey = @ForeignKey(name = "fk_project_users_project"))
     Project project;
 
     @ManyToOne
-    @JoinColumn(name = "iduser", nullable = false, foreignKey = @ForeignKey(name = "fk_project_users_user"))
+    @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(name = "fk_project_users_user"))
     User user;
 }

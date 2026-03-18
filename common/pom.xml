@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -19,20 +20,18 @@
     </properties>
 
     <dependencies>
+        <!-- УДАЛИТЬ старые Jakarta 5.0.0 зависимости -->
+        <!-- Spring Boot 3.5.5 использует Jakarta EE 10 (версии 6.x) -->
+
+        <!-- Если нужны Jakarta API, используйте версии 6.x -->
         <dependency>
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
-            <version>5.0.0</version>
+            <version>6.0.0</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>jakarta.validation</groupId>
-            <artifactId>jakarta.validation-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>jakarta.persistence</groupId>
-            <artifactId>jakarta.persistence-api</artifactId>
-        </dependency>
+
+        <!-- Или лучше вообще удалить - Spring Boot предоставит нужные -->
 
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
@@ -51,7 +50,6 @@
             <version>0.11.5</version>
             <scope>runtime</scope>
         </dependency>
-
     </dependencies>
 
     <build>
@@ -65,6 +63,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
-

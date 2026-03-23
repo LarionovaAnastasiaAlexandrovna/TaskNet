@@ -1,6 +1,6 @@
 package edu.service;
 
-import dto.GeneraleResponseDTO;
+import dto.GeneralResponseDTO;
 import dto.user.ProfileResponseDTO;
 import dto.task.TaskDTO;
 import dto.user.UserDTO;
@@ -45,12 +45,12 @@ public class ProfileUserServise {
         return new ProfileResponseDTO(userDTO, taskDTOs);
     }
 
-    public GeneraleResponseDTO updateProfile(UserDTO userDTO) {
+    public GeneralResponseDTO updateProfile(UserDTO userDTO) {
         try {
             Optional<User> optionalUser = usersRepository.findByEmail(userDTO.getEmail());
 
             if (optionalUser.isEmpty()) {
-                return new GeneraleResponseDTO(
+                return new GeneralResponseDTO(
                         "Пользователь с таким email не найден",
                         HttpStatus.NOT_FOUND.value(),
                         null
@@ -68,14 +68,14 @@ public class ProfileUserServise {
             // user.setProfilePhoto(userDTO.getProfilePhoto()); // если редактируем фото
 
             usersRepository.save(user);
-                return new GeneraleResponseDTO(
+                return new GeneralResponseDTO(
                         "Профиль успешно обновлён",
                         HttpStatus.OK.value(),
                         null
                 );
 
         } catch (Exception e) {
-            return new GeneraleResponseDTO(
+            return new GeneralResponseDTO(
                     "Ошибка при обновлении профиля: " + e.getMessage(),
                     HttpStatus.INTERNAL_SERVER_ERROR.value(),
                     null

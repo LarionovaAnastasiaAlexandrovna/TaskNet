@@ -59,7 +59,7 @@ app:
 
 inner:
   auth:
-    url: http://localhost:8082/innerprosses
+    url: http://localhost:8082/interprocess
 
 #openapi:
 #  service:

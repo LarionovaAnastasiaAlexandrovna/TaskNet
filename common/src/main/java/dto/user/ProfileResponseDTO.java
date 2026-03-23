@@ -1,6 +1,6 @@
 package dto.user;
 
-import dto.GeneraleResponseDTO;
+import dto.GeneralResponseDTO;
 import dto.task.TaskDTO;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -16,7 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ProfileResponseDTO extends GeneraleResponseDTO {
+public class ProfileResponseDTO extends GeneralResponseDTO {
     UserDTO userDTO;
     List<TaskDTO> tasks;
 }

@@ -2,7 +2,7 @@ package edu.controllers;
 
 import dto.user.LoginRequestDTO;
 import dto.user.RegisterRequestDTO;
-import dto.user.RegistrationResponseDTO;
+import dto.user.RegisterResponseDTO;
 import edu.email.EmailVerificationService;
 import edu.service.ScrapperAuthClient;
 import edu.util.JwtUtil;
@@ -24,11 +24,11 @@ public class AuthController {
     private final EmailVerificationService emailVerificationService;
 
     @PostMapping("/registration")
-    public ResponseEntity<RegistrationResponseDTO> registerUser(@RequestBody RegisterRequestDTO request) {
+    public ResponseEntity<RegisterResponseDTO> registerUser(@RequestBody RegisterRequestDTO request) {
         log.info("Получен запрос на регистрацию: {}", request.getEmail());
         var response = scrapperAuthClient.register(request);
-        emailVerificationService.sendVerificationEmail(request.getEmail());
-        log.info("Email отправлен пользователю: {}", request.getEmail());
+        //emailVerificationService.sendVerificationEmail(request.getEmail());
+        //log.info("Email отправлен пользователю: {}", request.getEmail());
         return ResponseEntity.ok(response);
     }
 

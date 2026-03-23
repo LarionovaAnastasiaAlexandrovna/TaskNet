@@ -1,6 +1,6 @@
 package edu.controllers;
 
-import dto.GeneraleResponseDTO;
+import dto.GeneralResponseDTO;
 import dto.user.ProfileResponseDTO;
 import dto.user.UserDTO;
 import edu.service.ProfileUserServise;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("innerprosses/profile")
+@RequestMapping("interprocess/profile")
 public class ProfileUserController {
 
     private final ProfileUserServise profileServise;
@@ -38,7 +38,7 @@ public class ProfileUserController {
     @PutMapping("/update")
     public ResponseEntity<?> updateUserProfile(@RequestBody UserDTO userDTO) {
         try {
-            GeneraleResponseDTO responseDTO = profileServise.updateProfile(userDTO);
+            GeneralResponseDTO responseDTO = profileServise.updateProfile(userDTO);
             return ResponseEntity.ok(responseDTO);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

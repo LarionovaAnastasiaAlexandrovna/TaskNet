@@ -26,7 +26,7 @@ public class AuthUserService {
         User user = converter.convert(registerRequestDTO);
         if (repository.findByEmail(user.getEmail()).isPresent()
         ) {
-            throw new UserException(UserException.Type.USER_ALREADY_EXISTS, "Пользователь уже существует");
+            throw new UserException(UserException.Type.USER_ALREADY_EXISTS, "Пользователь с почтой " + user.getEmail() + " уже существует");
         } else {
             System.out.println("Пытаемся сделать repository.save(user)");
             if (user.getProfilePhoto() != null) {

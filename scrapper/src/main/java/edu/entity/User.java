@@ -13,19 +13,25 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
 
+@Builder
 @Setter
 @Getter
 @Entity
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @ToString
 @Table(name = "Users"/*, schema = "LAA"*/)
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

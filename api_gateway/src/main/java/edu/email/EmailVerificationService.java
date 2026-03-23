@@ -2,11 +2,13 @@ package edu.email;
 
 import edu.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class EmailVerificationService {
@@ -25,7 +27,14 @@ public class EmailVerificationService {
         String link = verificationBaseUrl + token;
 
         var message = createVerificationMessage(email, link);
-        mailSender.send(message);
+        try {
+            mailSender.send(message);
+        } catch (Exception e) {
+            log.error("Тип ошибки: {}", e.getClass().getName());
+            log.error("Стек ошибки:", e);
+
+            throw new RuntimeException("Failed to send verification email to: " + email, e);        }
+
     }
 
     private SimpleMailMessage createVerificationMessage(String email, String link) {

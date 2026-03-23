@@ -1,7 +1,7 @@
 package edu.controllers;
 
 import dto.comment.CommentDTO;
-import dto.GeneraleResponseDTO;
+import dto.GeneralResponseDTO;
 import dto.task.TaskDTO;
 import edu.service.TaskService;
 import jakarta.validation.Valid;
@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("innerprosses/task")
+@RequestMapping("interprocess/task")
 public class TaskController {
     private final TaskService taskService;
 
@@ -28,7 +28,7 @@ public class TaskController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<?> createProject(@RequestHeader("X-User-Email") String email,
+    public ResponseEntity<?> createTask(@RequestHeader("X-User-Email") String email,
                                            @Valid @RequestBody TaskDTO taskDTO) {
         System.out.println("Запрос на создание новой задачи пришел в scrapper");
         TaskDTO saveTaskDTO = taskService.saveNew(taskDTO, email);
@@ -65,7 +65,7 @@ public class TaskController {
     @PutMapping("/{id}/update")
     public ResponseEntity<?> updateTask(@RequestBody TaskDTO taskDTO) {
         try {
-            GeneraleResponseDTO responseDTO = taskService.updateTask(taskDTO);
+            GeneralResponseDTO responseDTO = taskService.updateTask(taskDTO);
             return ResponseEntity.ok(responseDTO);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -81,7 +81,7 @@ public class TaskController {
         return ResponseEntity.status(HttpStatus.CREATED).body(saveCommentDTO);
     }
 
-    //        String scrapperUrl = "http://localhost:8082/innerprosses/task/" + id + "/comments";
+    //        String scrapperUrl = "http://localhost:8082/interprocess/task/" + id + "/comments";
     @GetMapping("/{id}/comments")
     public ResponseEntity<?> getCommentsByTask(@PathVariable Long id) {
         System.out.println("Запрос на получение комментариев по задаче №" + id + " пришел в scrapper");

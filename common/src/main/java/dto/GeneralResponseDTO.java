@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class GeneraleResponseDTO {
+public class GeneralResponseDTO {
     String response;
     Integer code;
     String token;

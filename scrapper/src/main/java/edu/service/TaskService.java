@@ -1,7 +1,7 @@
 package edu.service;
 
 import dto.comment.CommentDTO;
-import dto.GeneraleResponseDTO;
+import dto.GeneralResponseDTO;
 import dto.task.TaskDTO;
 import edu.entity.Comment;
 import edu.entity.Task;
@@ -67,12 +67,12 @@ public class TaskService {
         tasksRepository.updateLastViewById(id);
     }
 
-    public GeneraleResponseDTO updateTask(TaskDTO taskDTO) {
+    public GeneralResponseDTO updateTask(TaskDTO taskDTO) {
         try {
             Optional<Task> optionalTask = tasksRepository.findById(taskDTO.getTaskId());
 
             if (optionalTask.isEmpty()) {
-                return new GeneraleResponseDTO(
+                return new GeneralResponseDTO(
                         "Пользователь с таким email не найден",
                         HttpStatus.NOT_FOUND.value(),
                         null
@@ -83,14 +83,14 @@ public class TaskService {
             task = converter.updateTaskFromTaskDTO(task, taskDTO);
 
             tasksRepository.save(task);
-            return new GeneraleResponseDTO(
+            return new GeneralResponseDTO(
                     "Задача успешно обновлена",
                     HttpStatus.OK.value(),
                     null
             );
 
         } catch (Exception e) {
-            return new GeneraleResponseDTO(
+            return new GeneralResponseDTO(
                     "Ошибка при обновлении задачи: " + e.getMessage(),
                     HttpStatus.INTERNAL_SERVER_ERROR.value(),
                     null

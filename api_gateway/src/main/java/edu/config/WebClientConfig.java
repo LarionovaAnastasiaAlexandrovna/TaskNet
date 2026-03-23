@@ -8,7 +8,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Configuration
 public class WebClientConfig {
 
-    @Value("${inner.auth.url:http://localhost:8082/innerprosses}")
+    @Value("${inner.auth.url:http://localhost:8082/interprocess}")
     private String scrapperBaseUrl;
 
     @Bean

@@ -5,6 +5,7 @@ import dto.GeneralResponseDTO;
 import dto.task.TaskDTO;
 import edu.service.TaskService;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("interprocess/task")
 public class TaskController {
@@ -30,15 +32,15 @@ public class TaskController {
     @PostMapping("/create")
     public ResponseEntity<?> createTask(@RequestHeader("X-User-Email") String email,
                                            @Valid @RequestBody TaskDTO taskDTO) {
-        System.out.println("Запрос на создание новой задачи пришел в scrapper");
+        log.info("Запрос на создание новой задачи пришел в scrapper");
         TaskDTO saveTaskDTO = taskService.saveNew(taskDTO, email);
         return ResponseEntity.status(HttpStatus.CREATED).body(saveTaskDTO);
     }
 
     @GetMapping("/recent")
     public ResponseEntity<?> getRecentTasks(@RequestHeader("X-User-Email") String email) {
-        System.out.println("Scrapper получил email: " + email);
-        System.out.println("Запрос на получение недавних задач пришел в scrapper");
+        log.info("Scrapper получил email: {}", email);
+        log.info("Запрос на получение недавних задач пришел в scrapper");
         try {
             List<TaskDTO> taskDTOs = taskService.getTasksByEmail(email);
             return ResponseEntity.ok(taskDTOs);
@@ -76,7 +78,7 @@ public class TaskController {
     @PostMapping("/{id}/add-comment")
     public ResponseEntity<?> addComment(@RequestHeader("X-User-Email") String email,
                                         @Valid @RequestBody CommentDTO commentDTO) {
-        System.out.println("Запрос на создание нового комментария пришел в scrapper");
+        log.info("Запрос на создание нового комментария пришел в scrapper");
         CommentDTO saveCommentDTO = taskService.saveNew(commentDTO, email);
         return ResponseEntity.status(HttpStatus.CREATED).body(saveCommentDTO);
     }
@@ -84,7 +86,7 @@ public class TaskController {
     //        String scrapperUrl = "http://localhost:8082/interprocess/task/" + id + "/comments";
     @GetMapping("/{id}/comments")
     public ResponseEntity<?> getCommentsByTask(@PathVariable Long id) {
-        System.out.println("Запрос на получение комментариев по задаче №" + id + " пришел в scrapper");
+        log.info("Запрос на получение комментариев по задаче №" + id + " пришел в scrapper");
         try {
             List<CommentDTO> commentDTOS = taskService.getAllCommentsByTackId(id);
             return ResponseEntity.ok(commentDTOS);

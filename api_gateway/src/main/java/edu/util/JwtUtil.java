@@ -2,6 +2,7 @@ package edu.util;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -11,17 +12,16 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    // Генерация ключа
+    @Value("${jwt.secret}")
+    private String secret;
+
     private SecretKey getSigningKey() {
-        // Минимум 256 бит для HS256
-        String SECRET = "your_super_secret_key_which_should_be_long_enough";
-        return Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8));
+        return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
     // Генерация токена
     public String generateTokenSession(String email) {
-        // 20 минут
-        long EXPIRATION_TIME_SESSION = 60 * 60 * 1000;
+        long EXPIRATION_TIME_SESSION = 60 * 60 * 1000; // 20 минут
         return Jwts.builder()
                 .setSubject(email)
                 .setIssuedAt(new Date())
@@ -31,8 +31,7 @@ public class JwtUtil {
     }
 
     public String generateTokenVerify(String email) {
-        // 24 часа
-        long EXPIRATION_TIME_VERIFY = 24 * 60 * 60 * 1000;
+        long EXPIRATION_TIME_VERIFY = 24 * 60 * 60 * 1000; // 24 часа
         return Jwts.builder()
                 .setSubject(email)
                 .setIssuedAt(new Date())
@@ -41,7 +40,6 @@ public class JwtUtil {
                 .compact();
     }
 
-    // Проверка токена
     public boolean isInvalidToken(String token) {
         try {
             Jwts.parserBuilder()
@@ -50,12 +48,10 @@ public class JwtUtil {
                     .parseClaimsJws(token);
             return false;
         } catch (JwtException e) {
-            // Можно логировать разные ошибки: ExpiredJwtException, MalformedJwtException и т.п.
             return true;
         }
     }
 
-    // Извлечение email из токена
     public String extractEmail(String token) {
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())

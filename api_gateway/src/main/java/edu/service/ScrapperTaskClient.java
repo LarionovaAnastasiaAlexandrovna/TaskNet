@@ -35,7 +35,7 @@ public class ScrapperTaskClient {
                 .bodyValue(taskDTO)
                 .retrieve()
                 .bodyToMono(TaskDTO.class)
-                .timeout(Duration.ofSeconds(3))
+                .timeout(Duration.ofSeconds(5))
                 .retryWhen(RETRY_POLICY)
                 .doOnError(e -> log.error("Ошибка при создании задачи в Scrapper: {}", e.getMessage()))
                 .block();
@@ -50,7 +50,7 @@ public class ScrapperTaskClient {
                 .retrieve()
                 .bodyToFlux(TaskDTO.class)
                 .collectList()
-                .timeout(Duration.ofSeconds(3))
+                .timeout(Duration.ofSeconds(5))
                 .retryWhen(RETRY_POLICY)
                 .doOnError(e -> log.error("Ошибка при получении недавних задач из Scrapper: {}", e.getMessage()))
                 .block();
@@ -63,7 +63,7 @@ public class ScrapperTaskClient {
                 .uri("/task/{id}/view", taskId)
                 .retrieve()
                 .toBodilessEntity()
-                .timeout(Duration.ofSeconds(3))
+                .timeout(Duration.ofSeconds(5))
                 .retryWhen(RETRY_POLICY)
                 .doOnError(e -> log.error("Ошибка при обновлении просмотра задачи в Scrapper: {}", e.getMessage()))
                 .block();
@@ -77,7 +77,7 @@ public class ScrapperTaskClient {
                 .bodyValue(taskDTO)
                 .retrieve()
                 .bodyToMono(TaskDTO.class)
-                .timeout(Duration.ofSeconds(3))
+                .timeout(Duration.ofSeconds(5))
                 .retryWhen(RETRY_POLICY)
                 .doOnError(e -> log.error("Ошибка при обновлении задачи в Scrapper: {}", e.getMessage()))
                 .block();
@@ -92,7 +92,7 @@ public class ScrapperTaskClient {
                 .bodyValue(commentDTO)
                 .retrieve()
                 .bodyToMono(CommentDTO.class)
-                .timeout(Duration.ofSeconds(3))
+                .timeout(Duration.ofSeconds(5))
                 .retryWhen(RETRY_POLICY)
                 .doOnError(e -> log.error("Ошибка при добавлении комментария в Scrapper: {}", e.getMessage()))
                 .block();
@@ -106,7 +106,7 @@ public class ScrapperTaskClient {
                 .retrieve()
                 .bodyToFlux(CommentDTO.class)
                 .collectList()
-                .timeout(Duration.ofSeconds(3))
+                .timeout(Duration.ofSeconds(5))
                 .retryWhen(RETRY_POLICY)
                 .doOnError(e -> log.error("Ошибка при получении комментариев из Scrapper: {}", e.getMessage()))
                 .block();

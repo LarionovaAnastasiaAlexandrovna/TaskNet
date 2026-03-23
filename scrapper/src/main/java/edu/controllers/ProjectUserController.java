@@ -5,6 +5,7 @@ import dto.project.ProjectDTO;
 import dto.project.UserInProjectDTO;
 import edu.service.ProjectService;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,8 +16,10 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.text.MessageFormat;
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("interprocess/project")
 public class ProjectUserController {
@@ -29,14 +32,14 @@ public class ProjectUserController {
     @PostMapping("/create")
     public ResponseEntity<?> createProject(@Valid @RequestBody ProjectDTO createProjectRequestDTO,
                                            @RequestHeader("X-User-Email") String email) {
-        System.out.println("Запрос на регистрацию пришел в scrapper");
+        log.info("Запрос на регистрацию пришел в scrapper");
         ProjectDTO saveProject = projectService.saveNew(createProjectRequestDTO, email);
         return ResponseEntity.status(HttpStatus.CREATED).body(saveProject);
     }
 
     @GetMapping("/all")
     public ResponseEntity<?> getAllProject(@RequestHeader("X-User-Email") String email) {
-        System.out.println("Scrapper получил email: " + email);
+        log.info("Scrapper получил email: {}", email);
         try {
             List<ProjectDTO> projectDTOS = projectService.getProjectsByEmail(email);
             return ResponseEntity.ok(projectDTOS);
@@ -48,7 +51,7 @@ public class ProjectUserController {
 
     @GetMapping("/{id}/all-users")
     public ResponseEntity<?> getAllProjectUsers(@PathVariable Long id) {
-        System.out.println("Scrapper получил id: " + id);
+        log.info(MessageFormat.format("Scrapper получил id: {0}", id));
         try {
             List<UserInProjectDTO> users = projectService.getUsersByProjectId(id);
             return ResponseEntity.ok(users);
@@ -61,7 +64,7 @@ public class ProjectUserController {
     @PostMapping("/{id}/add-user")
     public ResponseEntity<?> addUserInProject(@PathVariable Long id,
                                               @RequestBody EmailRequestDTO request) {
-        System.out.println("Scrapper получил email: " + request.getEmail());
+        log.info("Scrapper получил email: {}", request.getEmail());
         try {
             projectService.addUserInProjectByEmail(request.getEmail(), id);
             return ResponseEntity.ok().build();

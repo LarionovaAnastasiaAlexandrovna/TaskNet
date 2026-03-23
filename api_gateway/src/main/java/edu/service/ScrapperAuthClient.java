@@ -36,7 +36,7 @@ public class ScrapperAuthClient {
                 .bodyValue(request)
                 .retrieve()
                 .bodyToMono(RegisterResponseDTO.class)
-                .timeout(Duration.ofSeconds(3)) // Защита от зависания
+                .timeout(Duration.ofSeconds(5)) // Защита от зависания
                 .retryWhen(RETRY_POLICY)
                 .doOnError(e -> log.error("Ошибка при регистрации в Scrapper: {}", e.getMessage()))
                 .block();
@@ -50,7 +50,7 @@ public class ScrapperAuthClient {
                 .bodyValue(request)
                 .retrieve()
                 .bodyToMono(GeneralResponseDTO.class)
-                .timeout(Duration.ofSeconds(3))
+                .timeout(Duration.ofSeconds(5))
                 .retryWhen(RETRY_POLICY)
                 .doOnError(e -> log.error("Ошибка при логине в Scrapper: {}", e.getMessage()))
                 .block();
@@ -65,7 +65,7 @@ public class ScrapperAuthClient {
                         .build())
                 .retrieve()
                 .bodyToMono(GeneralResponseDTO.class)
-                .timeout(Duration.ofSeconds(3))
+                .timeout(Duration.ofSeconds(5))
                 .retryWhen(RETRY_POLICY)
                 .doOnError(e -> log.error("Ошибка при верификации email в Scrapper: {}", e.getMessage()))
                 .block();

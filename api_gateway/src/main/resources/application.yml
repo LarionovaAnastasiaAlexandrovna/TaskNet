@@ -61,6 +61,8 @@ inner:
   auth:
     url: http://localhost:8082/interprocess
 
+jwt:
+  secret: "my_super_secret_key_which_should_be_long_enough"
 #openapi:
 #  service:
 #    title: Api Gateway

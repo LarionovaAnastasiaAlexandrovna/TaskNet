@@ -4,6 +4,7 @@ import dto.GeneralResponseDTO;
 import dto.user.ProfileResponseDTO;
 import dto.user.UserDTO;
 import edu.service.ProfileUserServise;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 @RequestMapping("interprocess/profile")
 public class ProfileUserController {
@@ -25,7 +27,7 @@ public class ProfileUserController {
 
     @GetMapping
     public ResponseEntity<?> getUserProfile(@RequestHeader("X-User-Email") String email) {
-        System.out.println("Scrapper получил email: " + email);
+        log.info("Scrapper получил email: " + email);
         try {
             ProfileResponseDTO responseDTO = profileServise.getProfileByEmail(email);
             return ResponseEntity.ok(responseDTO);

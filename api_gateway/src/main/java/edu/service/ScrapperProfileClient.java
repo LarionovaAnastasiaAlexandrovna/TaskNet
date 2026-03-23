@@ -33,7 +33,7 @@ public class ScrapperProfileClient {
                 .header("X-User-Email", email)
                 .retrieve()
                 .bodyToMono(ProfileResponseDTO.class)
-                .timeout(Duration.ofSeconds(3))
+                .timeout(Duration.ofSeconds(5))
                 .retryWhen(RETRY_POLICY)
                 .doOnError(e -> log.error("Ошибка при получении профиля из Scrapper: {}", e.getMessage()))
                 .block();
@@ -47,7 +47,7 @@ public class ScrapperProfileClient {
                 .bodyValue(userDTO)
                 .retrieve()
                 .bodyToMono(UserDTO.class)
-                .timeout(Duration.ofSeconds(3))
+                .timeout(Duration.ofSeconds(5))
                 .retryWhen(RETRY_POLICY)
                 .doOnError(e -> log.error("Ошибка при обновлении профиля в Scrapper: {}", e.getMessage()))
                 .block();

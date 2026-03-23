@@ -3,7 +3,7 @@ package edu.controllers;
 import dto.user.LoginRequestDTO;
 import dto.user.RegisterRequestDTO;
 import dto.user.RegisterResponseDTO;
-import edu.email.EmailVerificationService;
+//import edu.email.EmailVerificationService;
 import edu.service.ScrapperAuthClient;
 import edu.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ public class AuthController {
 
     private final ScrapperAuthClient scrapperAuthClient;
     private final JwtUtil jwtUtil;
-    private final EmailVerificationService emailVerificationService;
+//    private final EmailVerificationService emailVerificationService;
 
     @PostMapping("/registration")
     public ResponseEntity<RegisterResponseDTO> registerUser(@RequestBody RegisterRequestDTO request) {

@@ -36,7 +36,7 @@ public class ScrapperProjectClient {
                 .bodyValue(projectDTO)
                 .retrieve()
                 .bodyToMono(ProjectDTO.class)
-                .timeout(Duration.ofSeconds(3))
+                .timeout(Duration.ofSeconds(5))
                 .retryWhen(RETRY_POLICY)
                 .doOnError(e -> log.error("Ошибка при создании проекта в Scrapper: {}", e.getMessage()))
                 .block();
@@ -51,7 +51,7 @@ public class ScrapperProjectClient {
                 .retrieve()
                 .bodyToFlux(ProjectDTO.class)
                 .collectList()
-                .timeout(Duration.ofSeconds(3))
+                .timeout(Duration.ofSeconds(5))
                 .retryWhen(RETRY_POLICY)
                 .doOnError(e -> log.error("Ошибка при получении всех проектов из Scrapper: {}", e.getMessage()))
                 .block();
@@ -65,7 +65,7 @@ public class ScrapperProjectClient {
                 .retrieve()
                 .bodyToFlux(UserInProjectDTO.class)
                 .collectList()
-                .timeout(Duration.ofSeconds(3))
+                .timeout(Duration.ofSeconds(5))
                 .retryWhen(RETRY_POLICY)
                 .doOnError(e -> log.error("Ошибка при получении пользователей проекта из Scrapper: {}", e.getMessage()))
                 .block();
@@ -81,7 +81,7 @@ public class ScrapperProjectClient {
                 .bodyValue(emailRequest)
                 .retrieve()
                 .toBodilessEntity()
-                .timeout(Duration.ofSeconds(3))
+                .timeout(Duration.ofSeconds(5))
                 .retryWhen(RETRY_POLICY)
                 .doOnError(e -> log.error("Ошибка при добавлении пользователя в проект в Scrapper: {}", e.getMessage()))
                 .block();

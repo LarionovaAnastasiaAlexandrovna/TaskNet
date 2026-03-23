@@ -8,10 +8,12 @@ import edu.entity.User;
 import edu.service.AuthUserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @AllArgsConstructor
 @RestController
 @RequestMapping("interprocess/auth")
@@ -20,7 +22,7 @@ public class AuthUserController {
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterRequestDTO registerRequestDTO) {
-        System.out.println("Запрос на регистрацию пришел в scrapper");
+        log.info("Запрос на регистрацию пришел в scrapper");
             User savedUser = usersService.save(registerRequestDTO);
 
         RegisterResponseDTO response = RegisterResponseDTO.builder()
@@ -35,14 +37,14 @@ public class AuthUserController {
 
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@Valid @RequestBody LoginRequestDTO loginRequestDTO) {
-        System.out.println("Запрос на вход пришел в scrapper");
+        log.info("Запрос на вход пришел в scrapper");
         User user = usersService.login(loginRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
     }
 
     @GetMapping("/verify")
     public ResponseEntity<?> verifyEmail(@RequestParam String email) {
-        System.out.println("Запрос на верификацию пришел в scrapper");
+        log.info("Запрос на верификацию пришел в scrapper");
         boolean isVerify = usersService.verify(email);
         return ResponseEntity.status(HttpStatus.OK).body(new GeneralResponseDTO(isVerify ? "Почта успешно подтверждена!" : "Что-то пошло не так", 200, null));
     }

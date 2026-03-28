@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="2026-03-25-11-add-skill-definitions" author="LAA">
+        <sql><![CDATA[
+            -- Создаём таблицу справочника навыков
+            CREATE TABLE skill_definitions (
+               id SERIAL PRIMARY KEY,
+               name VARCHAR(100) NOT NULL UNIQUE,
+               description TEXT NOT NULL
+            );
+
+            ALTER TABLE user_skills RENAME COLUMN skill_id TO id;
+
+-- Добавляем колонку skill_id в user_skills
+            ALTER TABLE user_skills ADD COLUMN skill_id INTEGER REFERENCES skill_definitions(id) ON DELETE CASCADE;
+
+            -- Переносим данные: если в user_skills уже есть строки с skill_name, их нужно связать
+-- Но так как данных пока нет, можно просто удалить старую колонку skill_name
+            ALTER TABLE user_skills DROP COLUMN skill_name;
+
+-- Делаем skill_id NOT NULL (после переноса данных)
+            ALTER TABLE user_skills ALTER COLUMN skill_id SET NOT NULL;
+            ]]></sql>
+    </changeSet>
+
+</databaseChangeLog>

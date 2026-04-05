@@ -1,0 +1,176 @@
+/* AnalyticsPage.css */
+
+.analytics-container {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 0 0 20px 0;
+}
+
+/* Панель фильтров */
+.filters-panel {
+    background: #ffe1cd;
+    border-radius: 30px;
+    padding: 20px 25px;
+    margin-bottom: 25px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: flex-end;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.filter-group label {
+    font-weight: bold;
+    font-size: 14px;
+    color: #333;
+}
+
+.filter-select,
+.filter-date {
+    padding: 10px 14px;
+    border: none;
+    border-radius: 15px;
+    background: #fffeda;
+    font-family: 'Anonymous Pro', monospace;
+    font-size: 14px;
+    min-width: 180px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.filter-select:hover,
+.filter-date:hover {
+    background: #fff5b0;
+    transform: translateY(-1px);
+}
+
+.filter-select:focus,
+.filter-date:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px #ffbbbb;
+}
+
+.filter-select:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.date-group {
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+}
+
+.date-separator {
+    font-weight: bold;
+    font-size: 16px;
+    color: #333;
+}
+
+.filter-button {
+    background: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 15px;
+    padding: 10px 20px;
+    font-family: 'Anonymous Pro', monospace;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-left: auto;
+}
+
+.filter-button:hover {
+    background: #45a049;
+    transform: translateY(-2px);
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.filter-button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Сетка графиков */
+.charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+    gap: 25px;
+}
+
+.chart-card {
+    background: #ffe1cd;
+    border-radius: 30px;
+    padding: 20px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+}
+
+.chart-card:hover {
+    transform: translateY(-3px);
+}
+
+.chart-card.wide-chart {
+    grid-column: span 2;
+}
+
+.chart-card h3 {
+    margin: 0 0 8px 0;
+    font-size: 18px;
+    color: #333;
+}
+
+.chart-subtitle {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed #ffbbbb;
+}
+
+/* Состояния загрузки и ошибок */
+.loading-state,
+.error-state {
+    text-align: center;
+    padding: 50px;
+    background: #ffe1cd;
+    border-radius: 30px;
+    font-size: 18px;
+}
+
+.error-state {
+    color: #f44336;
+}
+
+/* Адаптивность */
+@media (max-width: 1100px) {
+    .chart-card.wide-chart {
+        grid-column: span 1;
+    }
+
+    .filters-panel {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .filter-group {
+        width: 100%;
+    }
+
+    .filter-button {
+        margin-left: 0;
+        margin-top: 10px;
+    }
+
+    .date-group {
+        flex-wrap: wrap;
+    }
+}

@@ -59,6 +59,7 @@ const HomePage = () => {
 
     const navigateToTaskPage = () => navigate("/task");
     const navigateToProjectPage = () => navigate("/project");
+    const navigateToAnalytics = () => navigate("/analytics");
 
     const handleTaskClick = (id) => {
         navigate(`/task/${id}`);
@@ -69,9 +70,9 @@ const HomePage = () => {
             <div className="navbar">
                 <div className="logo"></div>
                 <div className="nav-buttons-group">
-                    <button className="nav-button">Отчеты</button>
                     <button className="nav-button" onClick={navigateToTaskPage}>Задачи</button>
                     <button className="nav-button" onClick={navigateToProjectPage}>Проекты</button>
+                    <button className="nav-button" onClick={navigateToAnalytics}>Аналитика</button>
                     <button className="nav-button" onClick={navigateToProfilePage}>Профиль</button>
                 </div>
             </div>

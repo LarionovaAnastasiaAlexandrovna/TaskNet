@@ -130,15 +130,19 @@ const ProfilePage = () => {
     ? `data:image/jpeg;base64,${user.profilePhoto}`
     : '/default_profile_image.jpg';
 
-  return (
+    const navigateToTaskPage = () => navigate("/task");
+    const navigateToProjectPage = () => navigate("/project");
+    const navigateToAnalytics = () => navigate("/analytics");
+
+    return (
     <div className="base-page">
       {/* Навбар */}
       <div className="navbar">
         <button className="logo" onClick={handleLogoClick}></button>
         <div className="nav-buttons-group">
-          <button className="nav-button">Отчеты</button>
-          <button className="nav-button">Задачи</button>
-          <button className="nav-button">Проекты</button>
+          <button className="nav-button" onClick={navigateToTaskPage}>Задачи</button>
+          <button className="nav-button" onClick={navigateToProjectPage}>Проекты</button>
+          <button className="nav-button" onClick={navigateToAnalytics}>Аналитика</button>
         </div>
       </div>
 

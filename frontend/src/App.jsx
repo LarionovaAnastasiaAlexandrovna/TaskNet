@@ -7,6 +7,7 @@ import HomePage from "./HomePage";
 import ProfilePage from "./ProfilePage";
 import ProjectPage from "./ProjectPage";
 import TaskPage from "./TaskPage";
+import AnalyticsPage from './AnalyticsPage';
 
 const App = () => {
     return (
@@ -20,6 +21,7 @@ const App = () => {
                 <Route path="/project" element={<ProjectPage />} />
                 <Route path="/task" element={<TaskPage />} />
                 <Route path="/task/:taskId" element={<TaskPage />} />
+                <Route path="/analytics" element={<AnalyticsPage />} />
             </Routes>
         </Router>
     );

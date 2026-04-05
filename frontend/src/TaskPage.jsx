@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import { fetchWithAuth } from "./utils/auth";
 import './TaskPage.css';
@@ -56,7 +56,6 @@ const TaskPage = () => {
 
     const navigateToProfilePage = () => navigate("/profile");
     const navigateToProjectPage = () => navigate("/project");
-    const navigateToTaskPage = () => navigate("/task");
     const handleLogoClick = () => navigate('/home');
 
     const getPriorityIcon = (priority) => {
@@ -347,14 +346,15 @@ const TaskPage = () => {
         }
     }, [isEditing, selectedTask?.projectId, token]);
 
+    const navigateToAnalytics = () => navigate("/analytics");
+
     return (
         <div className="base-page">
             <div className="navbar">
                 <div className="logo" onClick={handleLogoClick}></div>
                 <div className="nav-buttons-group">
-                    <button className="nav-button">Отчеты</button>
-                    <button className="nav-button" onClick={navigateToTaskPage}>Задачи</button>
                     <button className="nav-button" onClick={navigateToProjectPage}>Проекты</button>
+                    <button className="nav-button" onClick={navigateToAnalytics}>Аналитика</button>
                     <button className="nav-button" onClick={navigateToProfilePage}>Профиль</button>
                 </div>
             </div>

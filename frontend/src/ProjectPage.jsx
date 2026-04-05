@@ -170,15 +170,16 @@ const ProjectPage = () => {
       fetchProjectsAndUsers();
     }, [token]);
 
-  return (
+    const navigateToAnalytics = () => navigate("/analytics");
+
+    return (
     <div className="base-page">
       {/* Навбар */}
       <div className="navbar">
         <div className="logo" onClick={handleLogoClick}></div>
         <div className="nav-buttons-group">
-          <button className="nav-button">Отчеты</button>
           <button className="nav-button" onClick={navigateToTaskPage}>Задачи</button>
-          <button className="nav-button">Проекты</button>
+          <button className="nav-button" onClick={navigateToAnalytics}>Аналитика</button>
           <button className="nav-button" onClick={navigateToProfilePage}>Профиль</button>
         </div>
       </div>

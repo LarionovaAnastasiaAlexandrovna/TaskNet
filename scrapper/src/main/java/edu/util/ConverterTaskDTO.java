@@ -4,12 +4,20 @@ import dto.task.TaskDTO;
 import edu.entity.Project;
 import edu.entity.Task;
 import edu.entity.User;
+import edu.repository.UsersRepository;
 import enums.TaskStatus;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
-
+@AllArgsConstructor
+@Component
 public class ConverterTaskDTO {
+
+    private final UsersRepository usersRepository;
+
 
     public Task convertTaskDTO(TaskDTO taskDTO, User user) {
         Task task = new Task();
@@ -25,6 +33,15 @@ public class ConverterTaskDTO {
         task.setDateCreate(taskDTO.getDateCreate());
         task.setDateLastView(taskDTO.getDateLastView());
         task.setAssignedTo(user);
+        task.setEstimatedHours(taskDTO.getEstimatedHours());
+        task.setCreatedBy(user.getUserId());
+        // Устанавливаем исполнителя, если передан
+        if (taskDTO.getAssignedTo() != null) {
+            Optional<User> assignee = usersRepository.findById(taskDTO.getAssignedTo());
+            assignee.ifPresent(task::setAssignedTo);
+        } else {
+            task.setAssignedTo(null);
+        }
 
         if (taskDTO.getProjectId() != null) {
             Project project = new Project();
@@ -48,6 +65,7 @@ public class ConverterTaskDTO {
         taskDTO.setStatus(task.getStatus());
         taskDTO.setDateCreate(task.getDateCreate());
         taskDTO.setDateLastView(task.getDateLastView());
+        taskDTO.setEstimatedHours(task.getEstimatedHours());
 
         if (task.getAssignedTo() != null) {
             taskDTO.setAssignedTo(task.getAssignedTo().getUserId());
@@ -78,7 +96,8 @@ public class ConverterTaskDTO {
                             task.getEndDate(),
                             task.getCategory(),
                             task.getDateCreate(),
-                            task.getDateLastView()
+                            task.getDateLastView(),
+                            task.getEstimatedHours()
     //                        task.getDependencies()
                     );
                 })

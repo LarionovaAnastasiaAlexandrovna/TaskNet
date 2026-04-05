@@ -54,5 +54,7 @@ public class TaskDTO {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     LocalDateTime dateLastView;
 
+    Double estimatedHours;
+
 //    private String dependencies;
 }

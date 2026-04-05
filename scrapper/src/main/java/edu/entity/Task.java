@@ -72,6 +72,13 @@ public class Task {
     @Column(name = "date_last_view")
     LocalDateTime dateLastView;
 
+    @Column(name = "estimated_hours")
+    Double estimatedHours;
+
+    @Column(name = "created_by")
+    Long createdBy;
+
+
 //    @Column(name = "dependencies", columnDefinition = "JSONB")
 //    String dependencies;
 

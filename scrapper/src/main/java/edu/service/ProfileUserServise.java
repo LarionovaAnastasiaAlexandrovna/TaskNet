@@ -23,13 +23,14 @@ public class ProfileUserServise {
 
     private final TasksRepository tasksRepository;
 
-    private final ConverterTaskDTO converterTask = new ConverterTaskDTO();
+    private final ConverterTaskDTO converterTask;
 
     private final ConverterRequestUserDTO converterUser = new ConverterRequestUserDTO();
 
-    public ProfileUserServise(UsersRepository usersRepository, TasksRepository tasksRepository) {
+    public ProfileUserServise(UsersRepository usersRepository, TasksRepository tasksRepository, ConverterTaskDTO converterTask) {
         this.usersRepository = usersRepository;
         this.tasksRepository = tasksRepository;
+        this.converterTask = converterTask;
     }
 
     public ProfileResponseDTO getProfileByEmail(String email) {

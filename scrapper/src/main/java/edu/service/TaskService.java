@@ -27,7 +27,7 @@ public class TaskService {
 
     private final CommentsRepository commentsRepository;
 
-    private final ConverterTaskDTO converter = new ConverterTaskDTO();
+    private final ConverterTaskDTO converter;
 
     private final ConverterCommentDTO converterCommentDTO = new ConverterCommentDTO();
 

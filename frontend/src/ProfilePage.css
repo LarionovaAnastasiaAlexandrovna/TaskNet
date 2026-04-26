@@ -1,95 +1,96 @@
-@import './common.css';  /* Путь к общим стилям */
-  
-  /* Стиль профиля */
-  .profile-info {
+@import './common.css';
+
+/* Стиль профиля */
+.profile-info {
     display: flex;
     flex-direction: column;
-    gap: 20px;
-  }
-  
-  .profile-info .info-item {
+    gap: var(--spacing-lg);
+    margin-bottom: 20px;
+}
+
+.profile-info .info-item {
     display: flex;
     justify-content: space-between;
     width: 100%;
-  }
-  
-  .profile-info .info-item span {
+}
+
+.profile-info .info-item span {
     font-size: 1rem;
-    color: black;
-  }
-  
-  .profile-info .info-item .value {
+    color: var(--color-text);
+}
+
+.profile-info .info-item .value {
     font-weight: bold;
-    color: #333;
-  }
-  
-  .profile-image {
+    color: var(--color-text);
+}
+
+.profile-image {
     width: 150px;
     height: 150px;
-    background: #fffeda;
-    border-radius: 50%;
+    background: var(--color-background);
+    border-radius: var(--radius-round);
     object-fit: cover;
-  }
-  
-  .edit-button {
-    margin-top: 20px;
-    padding: 10px 20px;
-    background-color: #ffbbbb;
-    color: black;
+}
+
+.edit-button {
+    width: 100%;
+    margin-top: var(--spacing-lg);
+    padding: var(--spacing-sm) var(--spacing-lg);
+    background-color: var(--color-secondary);
+    color: var(--color-text);
     border: none;
-    border-radius: 5px;
+    border-radius: var(--radius-sm);
     cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  
-  .edit-button:hover {
-    background-color: #4CAF50;
-    color: white;
-  }
-  
-  .delete-button {
-    position: absolute;
-    bottom: 20px;
-    right: 20px;
-    background-color: #ffbbbb;
-    color: black;
-    border: none;
-    border-radius: 5px;
-    padding: 10px 20px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  
-  .delete-button:hover {
-    background-color: #A43939;
-    color: white;
-  }
-  
-  .content-area {
-    position: relative; /* добавляем позиционирование для родителя */
+    transition: background-color var(--transition-normal);
+}
+
+.edit-button:hover {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+}
+
+.content-area {
+    position: relative;
     flex-grow: 1;
-    background: #ffe1cd;
-    border-radius: 30px;
-    padding: 20px;
-    color: black;
-    height: 100%;
-  }
-  
-  .exit-button {
+    background: var(--color-surface);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    color: var(--color-text);
+    min-height: 400px;
+}
+
+.delete-button {
     position: absolute;
-    bottom: 20px;
-    left: 20px;
-    background-color: #ffbbbb;
-    color: black;
+    bottom: var(--spacing-lg);
+    right: var(--spacing-lg);
+    background-color: var(--color-secondary);
+    color: var(--color-text);
     border: none;
-    border-radius: 5px;
-    padding: 10px 20px;
+    border-radius: var(--radius-sm);
+    padding: var(--spacing-sm) var(--spacing-lg);
     cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  
-  .exit-button:hover {
-    background-color: #ffa07a;
-    color: white;
-  }
-  
+    transition: background-color var(--transition-normal);
+}
+
+.delete-button:hover {
+    background-color: var(--color-danger);
+    color: var(--color-white);
+}
+
+.exit-button {
+    position: absolute;
+    bottom: var(--spacing-lg);
+    left: var(--spacing-lg);
+    background-color: var(--color-secondary);
+    color: var(--color-text);
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: var(--spacing-sm) var(--spacing-lg);
+    cursor: pointer;
+    transition: background-color var(--transition-normal);
+}
+
+.exit-button:hover {
+    background-color: var(--color-warning);
+    color: var(--color-white);
+}

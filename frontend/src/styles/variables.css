@@ -1,0 +1,79 @@
+/* src/styles/variables.css */
+:root {
+    /* Цветовая схема */
+    --color-primary: #4caf50;
+    --color-primary-hover: #45a049;
+    --color-secondary: #ffbbbb;
+    --color-secondary-hover: #ffa7a7;
+    --color-background: #fffeda;
+    --color-surface: #ffe1cd;
+    --color-surface-light: #fffeda;
+    --color-text: #333333;
+    --color-text-light: #666666;
+    --color-white: #ffffff;
+    --color-danger: #f44336;
+    --color-danger-hover: #d32f2f;
+    --color-warning: #ff9800;
+    --color-success: #4caf50;
+    --color-info: #2196f3;
+
+    /* Отступы */
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+    --spacing-xxl: 48px;
+
+    /* Скругления */
+    --radius-sm: 8px;
+    --radius-md: 15px;
+    --radius-lg: 30px;
+    --radius-xl: 40px;
+    --radius-round: 50%;
+
+    /* Тени */
+    --shadow-sm: 2px 2px 5px rgba(0, 0, 0, 0.1);
+    --shadow-md: 4px 4px 10px rgba(0, 0, 0, 0.25);
+
+    /* Анимации */
+    --transition-fast: 0.2s;
+    --transition-normal: 0.3s;
+
+    /* Цвета для комментариев и границ */
+    --color-border: #ccc;
+    --color-border-light: #eee;
+    --color-comment-header: #666;
+    --color-modal-overlay: rgba(0, 0, 0, 0.5);
+    --color-input-border: #ccc;
+    --shadow-modal: 0 4px 20px rgba(0, 0, 0, 0.3);
+
+    --color-black: #333333;
+}
+
+/* Тёмная тема */
+[data-theme="dark"] {
+    --color-primary: #66bb6a;
+    --color-primary-hover: #4caf50;
+    --color-secondary: #8b5e5e;
+    --color-secondary-hover: #7a4f4f;
+    --color-background: #2d2d2d;
+    --color-surface: #3d3d3d;
+    --color-surface-light: #4a4a4a;
+    --color-text: #eeeeee;
+    --color-text-light: #cccccc;
+    --color-white: #1e1e1e;
+    --color-danger: #e57373;
+    --color-danger-hover: #ef5350;
+    --color-warning: #ffb74d;
+    --color-success: #81c784;
+    --color-info: #64b5f6;
+    --color-border: #444;
+    --color-border-light: #333;
+    --color-comment-header: #aaa;
+    --color-modal-overlay: rgba(0, 0, 0, 0.7);
+    --color-input-border: #555;
+    --shadow-modal: 0 4px 20px rgba(0, 0, 0, 0.5);
+
+    --color-black: #333333;
+}

@@ -1,30 +1,40 @@
+/* TaskPage.css */
+@import './common.css';
+
 .comments-section {
-    margin-top: 20px;
-    padding-top: 10px;
-    border-top: 1px solid #ccc;
+    margin-top: var(--spacing-lg);
+    padding-top: var(--spacing-sm);
+    border-top: 1px solid var(--color-border);
 }
 
 .comment-item {
-    padding: 8px;
-    border-bottom: 1px solid #eee;
+    padding: var(--spacing-sm);
+    border-bottom: 1px solid var(--color-border-light);
 }
 
 .comment-header {
     font-size: 0.85em;
-    color: #666;
+    color: var(--color-comment-header);
     display: flex;
     justify-content: space-between;
-    margin-bottom: 4px;
+    margin-bottom: var(--spacing-xs);
 }
 
 .comment-author {
     font-weight: bold;
+    color: var(--color-text);
 }
 
 .new-comment textarea {
     width: 100%;
     height: 60px;
-    margin-bottom: 5px;
+    margin-bottom: var(--spacing-xs);
+    background: var(--color-white);
+    color: var(--color-text);
+    border: 1px solid var(--color-input-border);
+    border-radius: var(--radius-sm);
+    padding: var(--spacing-sm);
+    font-family: inherit;
 }
 
 .new-comment button {
@@ -38,7 +48,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: var(--color-modal-overlay);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -46,38 +56,49 @@
 }
 
 .modal {
-    background: white;
-    border-radius: 20px;
+    background: var(--color-white);
+    border-radius: var(--radius-lg);
     width: 90%;
     max-width: 600px;
-    max-height: 90vh;          /* ограничиваем высоту 90% от экрана */
-    overflow-y: auto;          /* добавляем вертикальную прокрутку */
-    padding: 20px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow-modal);
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: var(--spacing-md);
 }
 
 .modal h2 {
     margin-top: 0;
     text-align: center;
+    color: var(--color-text);
 }
 
 .modal label {
     font-weight: bold;
-    margin-top: 8px;
+    margin-top: var(--spacing-sm);
+    color: var(--color-text);
 }
 
 .modal input,
 .modal textarea,
 .modal select {
     width: 100%;
-    padding: 8px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
+    padding: var(--spacing-sm);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-input-border);
+    background: var(--color-white);
+    color: var(--color-text);
     font-family: inherit;
     box-sizing: border-box;
+}
+
+.modal input:focus,
+.modal textarea:focus,
+.modal select:focus {
+    outline: none;
+    border-color: var(--color-primary);
 }
 
 .modal textarea {
@@ -88,24 +109,35 @@
 .modal-buttons {
     display: flex;
     justify-content: flex-end;
-    gap: 10px;
-    margin-top: 16px;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-md);
 }
 
 .modal-buttons button {
-    padding: 8px 16px;
+    padding: var(--spacing-sm) var(--spacing-md);
     border: none;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     cursor: pointer;
     font-weight: bold;
+    transition: all var(--transition-fast);
 }
 
 .modal-buttons button:first-child {
-    background-color: #4caf50;
-    color: white;
+    background-color: var(--color-success);
+    color: var(--color-white);
+}
+
+.modal-buttons button:first-child:hover {
+    background-color: var(--color-primary-hover);
+    transform: translateY(-1px);
 }
 
 .modal-buttons button:last-child {
-    background-color: #f44336;
-    color: white;
+    background-color: var(--color-danger);
+    color: var(--color-white);
+}
+
+.modal-buttons button:last-child:hover {
+    background-color: var(--color-danger-hover);
+    transform: translateY(-1px);
 }

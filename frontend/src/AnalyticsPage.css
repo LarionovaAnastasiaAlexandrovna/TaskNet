@@ -1,14 +1,27 @@
 /* AnalyticsPage.css */
+@import './common.css';
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    height: auto;
+}
 
 .analytics-container {
     flex-direction: column;
     align-items: stretch;
-    padding: 0 0 20px 0;
+    padding: 20px 0 20px 0;
+    overflow-y: auto;
+    margin-top: 20px;
 }
 
 /* Панель фильтров */
 .filters-panel {
-    background: #ffe1cd;
+    background: var(--color-surface);
     border-radius: 30px;
     padding: 20px 25px;
     margin-bottom: 25px;
@@ -28,7 +41,7 @@
 .filter-group label {
     font-weight: bold;
     font-size: 14px;
-    color: #333;
+    color: var(--color-text);
 }
 
 .filter-select,
@@ -36,7 +49,7 @@
     padding: 10px 14px;
     border: none;
     border-radius: 15px;
-    background: #fffeda;
+    background: var(--color-background);
     font-family: 'Anonymous Pro', monospace;
     font-size: 14px;
     min-width: 180px;
@@ -46,14 +59,14 @@
 
 .filter-select:hover,
 .filter-date:hover {
-    background: #fff5b0;
+    background: var(--color-surface-light);
     transform: translateY(-1px);
 }
 
 .filter-select:focus,
 .filter-date:focus {
     outline: none;
-    box-shadow: 0 0 0 2px #ffbbbb;
+    box-shadow: 0 0 0 2px var(--color-secondary);
 }
 
 .filter-select:disabled {
@@ -70,11 +83,11 @@
 .date-separator {
     font-weight: bold;
     font-size: 16px;
-    color: #333;
+    color: var(--color-text);
 }
 
 .filter-button {
-    background: #4caf50;
+    background: var(--color-primary);
     color: white;
     border: none;
     border-radius: 15px;
@@ -88,7 +101,7 @@
 }
 
 .filter-button:hover {
-    background: #45a049;
+    background: var(--color-primary-hover);
     transform: translateY(-2px);
     box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
 }
@@ -107,7 +120,7 @@
 }
 
 .chart-card {
-    background: #ffe1cd;
+    background: var(--color-surface);
     border-radius: 30px;
     padding: 20px;
     box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
@@ -125,15 +138,15 @@
 .chart-card h3 {
     margin: 0 0 8px 0;
     font-size: 18px;
-    color: #333;
+    color: var(--color-text);
 }
 
 .chart-subtitle {
     font-size: 12px;
-    color: #666;
+    color: var(--color-text-light);
     margin-bottom: 15px;
     padding-bottom: 10px;
-    border-bottom: 1px dashed #ffbbbb;
+    border-bottom: 1px dashed var(--color-secondary);
 }
 
 /* Состояния загрузки и ошибок */
@@ -141,7 +154,7 @@
 .error-state {
     text-align: center;
     padding: 50px;
-    background: #ffe1cd;
+    background: var(--color-surface);
     border-radius: 30px;
     font-size: 18px;
 }

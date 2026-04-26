@@ -1,32 +1,34 @@
+/* Register.css */
 @import './common-auth.css';
 
-/* Регистр-специфические стили */
 .register-container {
-  position: relative;
-  background: #FFFEDA;
+    position: relative;
+    background: var(--color-background);
 }
 
 .register-box {
-  width: 570px;
-  height: 670px;
-  position: absolute;
-  background: #FFE1CD;
-  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.25);
-  border-radius: 50px;
+    width: 570px;
+    height: 670px;
+    position: absolute;
+    background: var(--color-surface);
+    box-shadow: var(--shadow-md);
+    border-radius: var(--radius-lg);
 }
 
 .register-btn {
-  width: 430px;
-  height: 70px;
-  position: absolute;
-  background: #FFBBBB;
-  border-radius: 15px;
-  font-size: 32px;
-  text-align: center;
-  color: black;
-  cursor: pointer;
+    width: 430px;
+    height: 70px;
+    position: absolute;
+    background: var(--color-secondary);
+    border-radius: var(--radius-md);
+    font-size: 32px;
+    text-align: center;
+    color: var(--color-text);
+    cursor: pointer;
+    transition: all var(--transition-fast);
 }
 
 .register-btn:hover {
-  background-color: #ff9999;
+    background-color: var(--color-secondary-hover);
+    transform: translateY(-2px);
 }

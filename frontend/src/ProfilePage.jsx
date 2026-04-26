@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchWithAuth } from "./utils/auth";
 import './ProfilePage.css';
+import './components/ThemeToggle.jsx';
+import ThemeToggle from "./components/ThemeToggle.jsx";
 
 const ProfilePage = () => {
   const navigate = useNavigate();
@@ -176,6 +178,10 @@ const ProfilePage = () => {
         {/* Основной блок */}
         <div className="content-area">
           <div className="profile-info">
+            <div className="theme-setting">
+                <span>Тёмная тема</span>
+                <ThemeToggle />
+            </div>
             <h2>Профиль пользователя</h2>
 
             <div className="user-info">
@@ -222,13 +228,14 @@ const ProfilePage = () => {
               {isEditing ? 'Сохранить изменения' : 'Редактировать'}
             </button>
 
-            <button className="exit-button" onClick={handleExit}>
-              Выйти
-            </button>
-
-            <button className="delete-button" onClick={handleDelete}>
-                Удалить
-            </button>
+              <div className="action-buttons">
+                  <button className="exit-button" onClick={handleExit}>
+                      Выйти
+                  </button>
+                  <button className="delete-button" onClick={handleDelete}>
+                      Удалить
+                  </button>
+              </div>
           </div>
         </div>
       </div>

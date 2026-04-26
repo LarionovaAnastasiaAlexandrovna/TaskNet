@@ -1,0 +1,18 @@
+.theme-toggle {
+    background: var(--color-secondary);
+    border: none;
+    border-radius: var(--radius-round);
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-fast);
+}
+
+.theme-toggle:hover {
+    transform: scale(1.1);
+    background: var(--color-secondary-hover);
+}

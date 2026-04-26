@@ -1,11 +1,9 @@
-/* Общие стили */
-/** {
-    box-sizing: border-box;
-}*/
+/* common-auth.css */
+@import './common.css';
 
 body {
     font-family: 'Anonymous Pro', monospace;
-    background: #FFFEDA;
+    background: var(--color-background);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -19,16 +17,16 @@ body {
     min-width: 250px;
     margin-left: 30px;
     padding: 4%;
-    background: #FFE1CD;
-    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.25);
-    border-radius: 40px;
+    background: var(--color-surface);
+    box-shadow: var(--shadow-md);
+    border-radius: var(--radius-xl);
     text-align: center;
 }
 
 h1 {
     font-size: 32px;
-    color: black;
-    margin-bottom: 15px;
+    color: var(--color-text);
+    margin-bottom: var(--spacing-md);
 }
 
 /* Стили для полей ввода и кнопок */
@@ -36,8 +34,8 @@ h1 {
 .button {
     width: 100%;
     height: auto;
-    margin: 8px 0;
-    border-radius: 12px;
+    margin: var(--spacing-sm) 0;
+    border-radius: var(--radius-md);
     font-size: 22px;
     text-align: center;
     outline: none;
@@ -45,59 +43,83 @@ h1 {
 }
 
 .input-field {
-    background-color: #FFFEDA !important;
-    border: 2px solid #FFE1CD;
-    color: #333333;
+    background-color: var(--color-background) !important;
+    border: 2px solid var(--color-surface);
+    color: var(--color-text);
     appearance: none;
-    padding-top: 10px;
-    padding-bottom: 10px;
+    padding-top: var(--spacing-sm);
+    padding-bottom: var(--spacing-sm);
 }
 
 .input-field:hover {
-    border-color: #FFBBBB;
+    border-color: var(--color-secondary);
+}
+
+.input-field:focus {
+    border-color: var(--color-primary);
+    outline: none;
 }
 
 .button {
-    background: #FFBBBB;
-    border: 2px solid #FFE1CD;
+    background: var(--color-secondary);
+    border: 2px solid var(--color-surface);
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding-top: 10px;
-    padding-bottom: 10px;
+    padding-top: var(--spacing-sm);
+    padding-bottom: var(--spacing-sm);
+    transition: all var(--transition-fast);
+    color: var(--color-text);
+}
+
+.button:hover:not(:disabled) {
+    background: var(--color-secondary-hover);
+    transform: translateY(-2px);
 }
 
 .button:disabled {
-    background: #ddd;
+    background: var(--color-border, #ddd);
     cursor: not-allowed;
+    opacity: 0.6;
 }
 
 .links {
-    margin-top: 15px;
+    margin-top: var(--spacing-md);
 }
 
 .links a {
     display: block;
     font-size: 16px;
-    color: black;
+    color: var(--color-text);
     text-decoration: none;
-    margin-top: 8px;
+    margin-top: var(--spacing-sm);
+    transition: color var(--transition-fast);
 }
 
 .links a:hover {
     text-decoration: underline;
+    color: var(--color-secondary-hover);
 }
 
 .link-button {
     background: none;
     border: none;
-    color: black;
+    color: var(--color-text);
     font-size: 16px;
     cursor: pointer;
     text-decoration: underline;
+    transition: color var(--transition-fast);
 }
 
 .link-button:hover {
-    color: #FFBBBB;
+    color: var(--color-secondary-hover);
+}
+
+/* Сообщения об ошибках */
+.error-message {
+    color: var(--color-danger);
+    font-size: 14px;
+    margin-top: var(--spacing-sm);
+    text-align: center;
 }

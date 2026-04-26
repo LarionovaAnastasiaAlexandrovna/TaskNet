@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { fetchWithAuth } from './utils/auth';
+import { useNavigate } from 'react-router-dom';
 import {
     BarChart, Bar, LineChart, Line, XAxis, YAxis,
     CartesianGrid, Tooltip, Legend, ResponsiveContainer
@@ -7,6 +8,7 @@ import {
 import './AnalyticsPage.css';
 
 const AnalyticsPage = () => {
+    const navigate = useNavigate();
     const [projects, setProjects] = useState([]);
     const [selectedProject, setSelectedProject] = useState('');
     const [selectedUser, setSelectedUser] = useState('');
@@ -127,15 +129,21 @@ const AnalyticsPage = () => {
         return analyticsData.current_load;
     };
 
+    const handleLogoClick = () => {
+        navigate('/home');
+    };
+    const navigateToTaskPage = () => navigate("/task");
+    const navigateToProjectPage = () => navigate("/project");
+    const navigateToProfile = () => navigate("/profile");
+
     return (
         <div className="base-page">
             <div className="navbar">
-                <div className="logo" onClick={() => window.location.href = '/'}></div>
+                <button className="logo" onClick={handleLogoClick}></button>
                 <div className="nav-buttons-group">
-                    <button className="nav-button" onClick={() => window.location.href = '/home'}>Главная</button>
-                    <button className="nav-button" onClick={() => window.location.href = '/task'}>Задачи</button>
-                    <button className="nav-button" onClick={() => window.location.href = '/project'}>Проекты</button>
-                    <button className="nav-button" onClick={() => window.location.href = '/profile'}>Профиль</button>
+                    <button className="nav-button" onClick={navigateToTaskPage}>Задачи</button>
+                    <button className="nav-button" onClick={navigateToProjectPage}>Проекты</button>
+                    <button className="nav-button" onClick={navigateToProfile}>Профиль</button>
                     <button className="nav-button active">Аналитика</button>
                 </div>
             </div>

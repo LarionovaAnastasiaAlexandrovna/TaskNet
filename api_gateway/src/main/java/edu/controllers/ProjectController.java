@@ -70,6 +70,18 @@ public class ProjectController {
         }
     }
 
+    @GetMapping("/{projectId}/tasks")
+    public ResponseEntity<?> getProjectTasks(@PathVariable Long projectId) {
+        log.info("Запрос на получение задач проекта ID: {}", projectId);
+        try {
+            var tasks = scrapperProjectClient.getTasksByProjectId(projectId);
+            return ResponseEntity.ok(tasks);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Ошибка получения задач проекта: " + e.getMessage());
+        }
+    }
+
     @GetMapping("/{id}/all-users")
     @CrossOrigin(origins = "http://localhost:5173")
     public ResponseEntity<?> getAllProjectUsers(@PathVariable Long id) {

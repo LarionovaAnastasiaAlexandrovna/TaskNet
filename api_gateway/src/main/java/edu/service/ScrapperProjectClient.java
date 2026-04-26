@@ -2,6 +2,7 @@ package edu.service;
 
 import dto.project.ProjectDTO;
 import dto.project.UserInProjectDTO;
+import dto.task.TaskDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -54,6 +55,19 @@ public class ScrapperProjectClient {
                 .timeout(Duration.ofSeconds(5))
                 .retryWhen(RETRY_POLICY)
                 .doOnError(e -> log.error("Ошибка при получении всех проектов из Scrapper: {}", e.getMessage()))
+                .block();
+    }
+
+    public List<TaskDTO> getTasksByProjectId(Long projectId) {
+        log.info("Получение задач проекта ID: {} из Scrapper", projectId);
+        return scrapperWebClient.get()
+                .uri("/project/{id}/tasks", projectId)
+                .retrieve()
+                .bodyToFlux(TaskDTO.class)
+                .collectList()
+                .timeout(Duration.ofSeconds(5))
+                .retryWhen(RETRY_POLICY)
+                .doOnError(e -> log.error("Ошибка при получении задач проекта из Scrapper: {}", e.getMessage()))
                 .block();
     }
 

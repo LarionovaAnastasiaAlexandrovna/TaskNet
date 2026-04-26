@@ -37,6 +37,18 @@ public class TaskController {
         return ResponseEntity.status(HttpStatus.CREATED).body(saveTaskDTO);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getTaskById(@PathVariable Long id) {
+        log.info("Запрос на получение задачи №{} в scrapper", id);
+        try {
+            TaskDTO taskDTO = taskService.getTaskById(id);
+            return ResponseEntity.ok(taskDTO);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Ошибка Scrapper-сервиса: " + e.getMessage());
+        }
+    }
+
     @GetMapping("/recent")
     public ResponseEntity<?> getRecentTasks(@RequestHeader("X-User-Email") String email) {
         log.info("Scrapper получил email: {}", email);

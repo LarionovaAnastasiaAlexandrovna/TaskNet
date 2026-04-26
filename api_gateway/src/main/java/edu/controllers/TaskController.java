@@ -50,6 +50,19 @@ public class TaskController {
         }
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getTaskById(@PathVariable Long id) {
+        log.info("Запрос на получение задачи ID: {}", id);
+        try {
+            var response = scrapperTaskClient.getTaskById(id);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("Ошибка при получении задачи ID: {}", id, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Ошибка получения задачи: " + e.getMessage());
+        }
+    }
+
     @GetMapping("/recent")
     public ResponseEntity<?> getRecentTasks(Authentication authentication) {
         log.info("Запрос на получение недавних задач");

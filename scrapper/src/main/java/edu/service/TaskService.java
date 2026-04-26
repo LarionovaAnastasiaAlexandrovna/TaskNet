@@ -63,6 +63,14 @@ public class TaskService {
         return converter.convertTasks(recentTasks);
     }
 
+    public TaskDTO getTaskById(Long id) {
+        Optional<Task> optionalTask = tasksRepository.findById(id);
+        if (optionalTask.isEmpty()) {
+            throw new RuntimeException("Задача не найдена с ID: " + id);
+        }
+        return converter.convertTask(optionalTask.get());
+    }
+
     public void updateLastView(Long id) {
         tasksRepository.updateLastViewById(id);
     }
@@ -100,5 +108,10 @@ public class TaskService {
 
     public List<CommentDTO> getAllCommentsByTackId(Long id) {
         return converterCommentDTO.convertComments(commentsRepository.getCommentsByTaskTaskId(id));
+    }
+
+    public List<TaskDTO> getTasksByProjectId(Long projectId) {
+        List<Task> tasks = tasksRepository.findByProject_ProjectId(projectId);
+        return converter.convertTasks(tasks);
     }
 }

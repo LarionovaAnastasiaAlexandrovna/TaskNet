@@ -1,9 +1,11 @@
 package edu.controllers;
 
+import dto.task.TaskDTO;
 import dto.user.EmailRequestDTO;
 import dto.project.ProjectDTO;
 import dto.project.UserInProjectDTO;
 import edu.service.ProjectService;
+import edu.service.TaskService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -24,9 +26,11 @@ import java.util.List;
 @RequestMapping("interprocess/project")
 public class ProjectUserController {
     private final ProjectService projectService;
+    private final TaskService taskService;
 
-    public ProjectUserController(ProjectService projectService) {
+    public ProjectUserController(ProjectService projectService, TaskService taskService) {
         this.projectService = projectService;
+        this.taskService = taskService;
     }
 
     @PostMapping("/create")
@@ -43,6 +47,18 @@ public class ProjectUserController {
         try {
             List<ProjectDTO> projectDTOS = projectService.getProjectsByEmail(email);
             return ResponseEntity.ok(projectDTOS);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Ошибка Scrapper-сервиса: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/{id}/tasks")
+    public ResponseEntity<?> getTasksByProjectId(@PathVariable Long id) {
+        log.info("Запрос на получение задач проекта №{} в scrapper", id);
+        try {
+            List<TaskDTO> tasks = taskService.getTasksByProjectId(id);
+            return ResponseEntity.ok(tasks);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Ошибка Scrapper-сервиса: " + e.getMessage());

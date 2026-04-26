@@ -62,17 +62,18 @@ public class ConverterTaskDTO {
         taskDTO.setStartDate(task.getStartDate());
         taskDTO.setEndDate(task.getEndDate());
         taskDTO.setCategory(task.getCategory());
-        taskDTO.setStatus(task.getStatus());
         taskDTO.setDateCreate(task.getDateCreate());
         taskDTO.setDateLastView(task.getDateLastView());
         taskDTO.setEstimatedHours(task.getEstimatedHours());
 
         if (task.getAssignedTo() != null) {
             taskDTO.setAssignedTo(task.getAssignedTo().getUserId());
+            taskDTO.setEmail(task.getAssignedTo().getEmail());
         }
 
         if (task.getProject() != null) {
             taskDTO.setProjectId(task.getProject().getProjectId());
+            taskDTO.setProjectName(task.getProject().getProjectName());
         }
 
         return taskDTO;
@@ -81,25 +82,28 @@ public class ConverterTaskDTO {
     public List<TaskDTO> convertTasks(List<Task> tasks) {
         return tasks.stream()
                 .map(task -> {
-                    assert task.getAssignedTo() != null;
-                    return new TaskDTO(
-                            task.getTaskId(),
-                            task.getTaskName(),
-                            task.getDescription(),
-                            task.getStatus(),
-                            task.getPriority(),
-                            task.getProject().getProjectId(),
-                            task.getProject().getProjectName(),
-                            task.getAssignedTo().getUserId(),
-                            task.getAssignedTo().getEmail(),
-                            task.getStartDate(),
-                            task.getEndDate(),
-                            task.getCategory(),
-                            task.getDateCreate(),
-                            task.getDateLastView(),
-                            task.getEstimatedHours()
-    //                        task.getDependencies()
-                    );
+                    TaskDTO dto = new TaskDTO();
+                    dto.setTaskId(task.getTaskId());
+                    dto.setTaskName(task.getTaskName());
+                    dto.setDescription(task.getDescription());
+                    dto.setStatus(task.getStatus());
+                    dto.setPriority(task.getPriority());
+                    dto.setStartDate(task.getStartDate());
+                    dto.setEndDate(task.getEndDate());
+                    dto.setCategory(task.getCategory());
+                    dto.setDateCreate(task.getDateCreate());
+                    dto.setDateLastView(task.getDateLastView());
+                    dto.setEstimatedHours(task.getEstimatedHours());
+
+                    if (task.getAssignedTo() != null) {
+                        dto.setAssignedTo(task.getAssignedTo().getUserId());
+                        dto.setEmail(task.getAssignedTo().getEmail());
+                    }
+                    if (task.getProject() != null) {
+                        dto.setProjectId(task.getProject().getProjectId());
+                        dto.setProjectName(task.getProject().getProjectName());
+                    }
+                    return dto;
                 })
                 .collect(Collectors.toList());
     }
@@ -117,10 +121,27 @@ public class ConverterTaskDTO {
         if (taskDTO.getPriority() != null) {
             task.setPriority(taskDTO.getPriority());
         }
+        if (taskDTO.getStatus() != null) {
+            task.setStatus(taskDTO.getStatus());
+        }
+        if (taskDTO.getStartDate() != null) {
+            task.setStartDate(taskDTO.getStartDate());
+        }
+        if (taskDTO.getEndDate() != null) {
+            task.setEndDate(taskDTO.getEndDate());
+        }
+        if (taskDTO.getEstimatedHours() != null) {
+            task.setEstimatedHours(taskDTO.getEstimatedHours());
+        }
         if (taskDTO.getAssignedTo() != null) {
             User user = new User();
             user.setUserId(taskDTO.getAssignedTo());
             task.setAssignedTo(user);
+        }
+        if (taskDTO.getProjectId() != null) {
+            Project project = new Project();
+            project.setProjectId(taskDTO.getProjectId());
+            task.setProject(project);
         }
         return task;
     }

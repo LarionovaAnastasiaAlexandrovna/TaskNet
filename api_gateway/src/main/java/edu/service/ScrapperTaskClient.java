@@ -41,6 +41,18 @@ public class ScrapperTaskClient {
                 .block();
     }
 
+    public TaskDTO getTaskById(Long taskId) {
+        log.info("Получение задачи ID: {} из Scrapper", taskId);
+        return scrapperWebClient.get()
+                .uri("/task/{id}", taskId)
+                .retrieve()
+                .bodyToMono(TaskDTO.class)
+                .timeout(Duration.ofSeconds(5))
+                .retryWhen(RETRY_POLICY)
+                .doOnError(e -> log.error("Ошибка при получении задачи из Scrapper: {}", e.getMessage()))
+                .block();
+    }
+
     public List<TaskDTO> getRecentTasks(String email) {
         log.info("Получение недавних задач из Scrapper для пользователя: {}", email);
 

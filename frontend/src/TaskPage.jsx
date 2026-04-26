@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { fetchWithAuth } from "./utils/auth";
 import './TaskPage.css';
 import './common.css';
 
 const TaskPage = () => {
+    const { taskId } = useParams();
     const [selectedTask, setSelectedTask] = useState(null);
     const priorities = ["LOWEST", "LOW", "MEDIUM", "HIGH", "HIGHEST"];
     const navigate = useNavigate();
@@ -15,15 +16,14 @@ const TaskPage = () => {
     const storedUserId = localStorage.getItem("userId");
     const userId = storedUserId ? parseInt(storedUserId, 10) : 0;
     const [isEditing, setIsEditing] = useState(false);
-    const [formData, setFormData] = useState(selectedTask || {});
+    const [formData, setFormData] = useState({});
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [projects, setProjects] = useState([]);
     const [, setTaskData] = useState(null);
 
-    // AI integration states
     const [aiRecommendation, setAiRecommendation] = useState(null);
     const [isLoadingRecommendation, setIsLoadingRecommendation] = useState(false);
-    const [projectMembers, setProjectMembers] = useState([]); // для модального окна
+    const [projectMembers, setProjectMembers] = useState([]);
 
     const [newTask, setNewTask] = useState({
         taskName: '',
@@ -33,8 +33,8 @@ const TaskPage = () => {
         projectId: '',
         category: '',
         priority: '',
-        assignedTo: '',      // AI: добавлено поле исполнителя
-        estimatedHours: ''   // AI: добавлено оценочное время
+        assignedTo: '',
+        estimatedHours: ''
     });
 
     const resetModalState = () => {
@@ -56,6 +56,7 @@ const TaskPage = () => {
 
     const navigateToProfilePage = () => navigate("/profile");
     const navigateToProjectPage = () => navigate("/project");
+    const navigateToAnalytics = () => navigate("/analytics");
     const handleLogoClick = () => navigate('/home');
 
     const getPriorityIcon = (priority) => {
@@ -91,73 +92,55 @@ const TaskPage = () => {
         });
     };
 
-    const handleTaskClick = async (task) => {
-        setSelectedTask({ ...task, comments: [] });
-        navigate(`/task/${task.taskId}`);
+    // Загрузка комментариев
+    const fetchComments = async (taskId) => {
+        if (!taskId) return;
         try {
-            await fetchWithAuth(`http://localhost:8081/task/${task.taskId}/view`, { method: "PUT" });
-        } catch (error) {
-            console.error("Ошибка при обновлении даты просмотра:", error);
-        }
-    };
-
-    const handleEditToggle = () => {
-        if (isEditing) {
-            handleSaveTaskChanges();
-            setIsEditing(false);
-        } else {
-            setFormData(selectedTask);
-            setIsEditing(true);
-        }
-    };
-
-    const handleFormChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
-    };
-
-    const handleSaveTaskChanges = async () => {
-        if (!token) return;
-        try {
-            const response = await fetch(`http://localhost:8081/task/${selectedTask.taskId}/update`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
-                },
-                body: JSON.stringify(formData),
-            });
-            if (!response.ok) throw new Error('Ошибка при обновлении задачи');
-            const updatedTask = await response.json();
-            setTaskData(updatedTask);
-            localStorage.setItem('taskData', JSON.stringify(updatedTask));
-        } catch (error) {
-            console.error('Ошибка:', error);
-        }
-    };
-
-    // Загрузка участников проекта для модального окна (при выборе проекта)
-    const fetchProjectMembersForModal = async (projectId) => {
-        if (!projectId || !token) return;
-        try {
-            const response = await fetch(`http://localhost:8081/project/${projectId}/all-users`, {
+            const response = await fetch(`http://localhost:8081/task/${taskId}/comments`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
-            if (!response.ok) throw new Error('Failed to load project members');
+            if (!response.ok) throw new Error("Ошибка при загрузке комментариев");
             const data = await response.json();
-            setProjectMembers(data);
+            setSelectedTask(prev => prev ? { ...prev, comments: data } : null);
         } catch (err) {
-            console.error('Ошибка загрузки участников проекта:', err);
-            setProjectMembers([]);
+            console.error(err);
         }
     };
 
-    useEffect(() => {
-        if (selectedTask?.projectId && isEditing) {
-            // для редактирования уже есть отдельная логика, оставим как было
+    // Загрузка задачи по ID
+    const fetchTaskById = async (taskId) => {
+        try {
+            const response = await fetch(`http://localhost:8081/task/${taskId}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (!response.ok) throw new Error("Ошибка при загрузке задачи");
+            const task = await response.json();
+            setSelectedTask({ ...task, comments: [] });
+            return task;
+        } catch (err) {
+            console.error(err);
+            setError(err.message);
+            return null;
         }
-    }, [isEditing, selectedTask?.projectId, token]);
+    };
 
+    // Загрузка данных при монтировании и при изменении taskId
+    useEffect(() => {
+        const loadData = async () => {
+            if (taskId) {
+                await fetchTaskById(taskId);
+                await fetchComments(taskId);
+                try {
+                    await fetchWithAuth(`http://localhost:8081/task/${taskId}/view`, { method: "PUT" });
+                } catch (error) {
+                    console.error("Ошибка при обновлении даты просмотра:", error);
+                }
+            }
+        };
+        loadData();
+    }, [taskId]);
+
+    // Загрузка списка недавних задач
     useEffect(() => {
         fetchWithAuth("http://localhost:8081/task/recent")
             .then(response => {
@@ -190,16 +173,69 @@ const TaskPage = () => {
         fetchProjectsAndUsers();
     }, [isModalOpen, token]);
 
+    const fetchProjectMembersForModal = async (projectId) => {
+        if (!projectId || !token) return;
+        try {
+            const response = await fetch(`http://localhost:8081/project/${projectId}/all-users`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (!response.ok) throw new Error('Failed to load project members');
+            const data = await response.json();
+            setProjectMembers(data);
+        } catch (err) {
+            console.error('Ошибка загрузки участников проекта:', err);
+            setProjectMembers([]);
+        }
+    };
+
+    const handleTaskClick = (task) => {
+        navigate(`/task/${task.taskId}`);
+    };
+
+    const handleEditToggle = () => {
+        if (isEditing) {
+            handleSaveTaskChanges();
+            setIsEditing(false);
+        } else {
+            setFormData(selectedTask);
+            setIsEditing(true);
+        }
+    };
+
+    const handleFormChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleSaveTaskChanges = async () => {
+        if (!token) return;
+        try {
+            const response = await fetch(`http://localhost:8081/task/${selectedTask.taskId}/update`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify(formData),
+            });
+            if (!response.ok) throw new Error('Ошибка при обновлении задачи');
+            const updatedTask = await response.json();
+            setTaskData(updatedTask);
+            setSelectedTask(prev => ({ ...prev, ...updatedTask }));
+            localStorage.setItem('taskData', JSON.stringify(updatedTask));
+        } catch (error) {
+            console.error('Ошибка:', error);
+        }
+    };
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setNewTask(prev => ({ ...prev, [name]: value }));
-        // Если изменился проект, загружаем его участников
         if (name === 'projectId' && value) {
             fetchProjectMembersForModal(value);
         }
     };
 
-    // AI: запрос рекомендации
     const handleAiRecommendation = async () => {
         if (!newTask.description || !newTask.projectId || !newTask.endDate) {
             alert("Для получения рекомендации заполните описание, проект и дату окончания.");
@@ -214,7 +250,7 @@ const TaskPage = () => {
                 body: JSON.stringify({
                     text: newTask.description,
                     project_id: parseInt(newTask.projectId, 10),
-                    deadline: newTask.endDate + "T23:59:59Z", // добавим время в конец дня
+                    deadline: newTask.endDate + "T23:59:59Z",
                     strategy: "balanced"
                 })
             });
@@ -229,10 +265,8 @@ const TaskPage = () => {
         }
     };
 
-    // Применить рекомендацию: заполнить исполнителя и оценочное время
     const applyRecommendation = () => {
         if (!aiRecommendation) return;
-        // Найти пользователя в списке участников, чтобы установить его ID
         const recommendedUser = projectMembers.find(member => member.userId === aiRecommendation.recommended_user_id);
         if (recommendedUser) {
             setNewTask(prev => ({
@@ -255,7 +289,6 @@ const TaskPage = () => {
             return;
         }
 
-        // Подготовка данных для отправки (assignedTo и estimatedHours)
         const taskPayload = {
             taskName: newTask.taskName,
             description: newTask.description,
@@ -264,7 +297,7 @@ const TaskPage = () => {
             projectId: parseInt(newTask.projectId, 10),
             category: newTask.category,
             priority: newTask.priority,
-            assignedTo: newTask.assignedTo || userId,   // если не выбрано, ставим текущего
+            assignedTo: newTask.assignedTo || userId,
             estimatedHours: newTask.estimatedHours ? parseFloat(newTask.estimatedHours) : null
         };
 
@@ -282,7 +315,6 @@ const TaskPage = () => {
             console.log("Задача создана:", createdTask);
             resetModalState();
             setIsModalOpen(false);
-            // Обновить список задач (можно перезагрузить)
             fetchWithAuth("http://localhost:8081/task/recent")
                 .then(res => res.json())
                 .then(data => setTasks(data));
@@ -293,6 +325,7 @@ const TaskPage = () => {
     };
 
     const [newCommentText, setNewCommentText] = useState('');
+
     const handleAddComment = async () => {
         if (!newCommentText.trim()) return;
         try {
@@ -305,28 +338,14 @@ const TaskPage = () => {
                 body: JSON.stringify({ content: newCommentText }),
             });
             if (!response.ok) throw new Error('Ошибка при добавлении комментария');
-            await fetchComments(selectedTask.taskId);
             setNewCommentText('');
+            await fetchComments(selectedTask.taskId);
         } catch (err) {
             console.error(err);
             alert('Не удалось добавить комментарий');
         }
     };
 
-    const fetchComments = async (taskId) => {
-        try {
-            const response = await fetch(`http://localhost:8081/task/${taskId}/comments`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            if (!response.ok) throw new Error("Ошибка при загрузке комментариев");
-            const data = await response.json();
-            setSelectedTask(prev => ({ ...prev, comments: data }));
-        } catch (err) {
-            console.error(err);
-        }
-    };
-
-    // Для редактирования задачи (оставляем как есть, но можно добавить аналогичную AI-кнопку, пока не требуется)
     const [projectMembersForEdit, setProjectMembersForEdit] = useState([]);
     useEffect(() => {
         if (selectedTask?.projectId && isEditing) {
@@ -346,7 +365,11 @@ const TaskPage = () => {
         }
     }, [isEditing, selectedTask?.projectId, token]);
 
-    const navigateToAnalytics = () => navigate("/analytics");
+    useEffect(() => {
+        if (selectedTask && isEditing) {
+            setFormData(selectedTask);
+        }
+    }, [selectedTask, isEditing]);
 
     return (
         <div className="base-page">
@@ -392,7 +415,6 @@ const TaskPage = () => {
                     </button>
                 </div>
 
-                {/* Модальное окно создания задачи */}
                 {isModalOpen && (
                     <div className="modal-overlay" onClick={() => { resetModalState(); setIsModalOpen(false); }}>
                         <div className="modal" onClick={(e) => e.stopPropagation()}>
@@ -433,7 +455,6 @@ const TaskPage = () => {
                                 <option value="HIGHEST">HIGHEST</option>
                             </select>
 
-                            {/* Поле исполнителя */}
                             <label>Исполнитель:</label>
                             <select name="assignedTo" value={newTask.assignedTo} onChange={handleInputChange}>
                                 <option value="">-- Выберите исполнителя --</option>
@@ -444,7 +465,6 @@ const TaskPage = () => {
                                 ))}
                             </select>
 
-                            {/* Поле оценочного времени */}
                             <label>Оценочное время (часы):</label>
                             <input
                                 type="number"
@@ -455,7 +475,6 @@ const TaskPage = () => {
                                 placeholder="Например, 4.5"
                             />
 
-                            {/* Кнопка ИИ-рекомендации */}
                             <button
                                 type="button"
                                 onClick={handleAiRecommendation}
@@ -465,7 +484,6 @@ const TaskPage = () => {
                                 {isLoadingRecommendation ? 'Загрузка...' : '🤖 Рекомендация ИИ'}
                             </button>
 
-                            {/* Отображение рекомендации */}
                             {aiRecommendation && (
                                 <div style={{ marginTop: '10px', padding: '10px', border: '1px solid #ccc', borderRadius: '5px', backgroundColor: '#f9f9f9' }}>
                                     <p><strong>Рекомендация ИИ:</strong></p>
@@ -485,7 +503,6 @@ const TaskPage = () => {
                     </div>
                 )}
 
-                {/* Правая панель с деталями задачи и комментариями (без изменений, но для краткости оставлю) */}
                 <div className="content-area">
                     {selectedTask ? (
                         <>
@@ -518,8 +535,30 @@ const TaskPage = () => {
                                         selectedTask.email
                                     )}
                                 </p>
-                                <p><strong>Дата начала:</strong> {formatDate(selectedTask.startDate)}</p>
-                                <p><strong>Дата окончания:</strong> {formatDate(selectedTask.endDate)}</p>
+                                <p><strong>Дата начала:</strong>
+                                    {isEditing ? (
+                                        <input
+                                            type="date"
+                                            name="startDate"
+                                            value={formData.startDate || ''}
+                                            onChange={handleFormChange}
+                                        />
+                                    ) : (
+                                        formatDate(selectedTask.startDate)
+                                    )}
+                                </p>
+                                <p><strong>Дата окончания:</strong>
+                                    {isEditing ? (
+                                        <input
+                                            type="date"
+                                            name="endDate"
+                                            value={formData.endDate || ''}
+                                            onChange={handleFormChange}
+                                        />
+                                    ) : (
+                                        formatDate(selectedTask.endDate)
+                                    )}
+                                </p>
                                 <p><strong>Категория:</strong>
                                     {isEditing ? (
                                         <input name="category" value={formData.category || ''} onChange={handleFormChange} />

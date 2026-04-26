@@ -27,4 +27,6 @@ public interface TasksRepository extends JpaRepository<Task, Long> {
     @Transactional
     @Query(value = "UPDATE tasks SET date_last_view = NOW() WHERE task_id = :id", nativeQuery = true)
     void updateLastViewById(@Param("id") Long id);
+
+    List<Task> findByProject_ProjectId(Long projectId);
 }
